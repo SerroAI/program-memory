@@ -326,3 +326,8 @@ MIT. Use it, fork it, build on it.
 - [Serro](https://serro.ai) - the managed version of what this repo attempts to build
 - [Claude Code](https://claude.ai/code) - the tool this is built with
 - [Model Context Protocol](https://modelcontextprotocol.io) - the integration layer all approaches depend on
+
+### Worth knowing if you're going deep on Family C
+
+- [Apache Iggy](https://github.com/iggy-rs/iggy) - persistent message streaming platform (lightweight Kafka in Rust). Fits as a durable event bus between your webhook sources and ingestion agent — gives you replay, backpressure, and delivery guarantees that raw webhooks don't.
+- [CocoIndex](https://github.com/cocoindex-io/cocoindex) - open-source incremental data transformation framework built for AI indexing pipelines. Fits as a replacement for the custom ingestion agent — handles source-to-index transformation, incremental updates, and embedding generation declaratively.
