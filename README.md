@@ -247,9 +247,7 @@ That threshold is gone.
 
 AI has decoupled team size from execution capacity. A 10-person engineering team today can move at a speed and breadth that would have required 80 people five years ago. The ambition expands to meet the new capacity. And the moment you're running eight things at once with a team of ten, you have an 80-person company's coordination problems with none of the organizational infrastructure that large companies built to handle them.
 
-This is the shift from product engineering to program engineering.
-
-Product engineering gets the software built. Program engineering keeps the broader system moving: priorities, dependencies, sequencing, risk, alignment, and delivery visibility across teams and functions. When a program has no name, no owner, and no shared visibility, it still gets run - by whoever has enough context to hold the picture. That person becomes the accidental program engineer, doing it on top of their actual job, and all the institutional knowledge lives in their head.
+This is the shift from product engineering to program engineering. When a program has no name, no owner, and no shared visibility, it still gets run — by whoever has enough context to hold the picture. That person becomes the accidental program engineer, doing it on top of their actual job, and all the institutional knowledge lives in their head.
 
 [Read the full essay - Welcome to Program Engineering](https://serro.ai/blog/welcome-to-program-engineering)
 
