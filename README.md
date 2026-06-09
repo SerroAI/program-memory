@@ -2,6 +2,8 @@
 
 > A starter kit for building live shared program memory using Claude Code, MCP integrations, and git - no proprietary infrastructure required.
 
+> **This repo contains step-by-step instructions, not code.** There is nothing to `npm install` or `docker run`. Each family folder is a guide for how to build the implementation yourself using Claude Code and native MCP integrations.
+
 [![Status](https://img.shields.io/badge/status-checkpoint%201%20complete-yellow)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
 [![Built with](https://img.shields.io/badge/built%20with-Claude%20Code-blueviolet)]()
@@ -123,9 +125,9 @@ The biggest structural gap is the data corpus. Serro has been ingesting and inde
 
 | Layer | Status | Notes |
 |---|---|---|
-| Memory layer | 🟡 Designed, not built | Three architectures documented. Not validated against a real org. |
-| Proactive layer | 🟡 Designed, not built | Requires memory layer to be validated first |
-| Widget layer | 🔴 Blocked | Requires memory + proactive layers |
+| Memory layer | 🟡 Instructions written, not built | Three architectures documented with step-by-step guides. Not validated against a real org. |
+| Proactive layer | 🟡 Out of scope (checkpoint 1) | Requires memory layer to be validated first |
+| Widget layer | 🔴 Out of scope (checkpoint 1) | Requires memory + proactive layers |
 
 **Checkpoint 1 complete:** capability analysis, architectural decision tree, and implementation options documented.  
 **Checkpoint 2:** build Family B or C2 against a real org and measure classification accuracy, coverage, and latency.
