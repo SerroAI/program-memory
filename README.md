@@ -255,15 +255,15 @@ This is the shift from product engineering to program engineering. When a progra
 
 ### What is an agentic TPM?
 
-An agentic TPM is an AI agent that performs the coordination work of a Technical Program Manager automatically. It:
-
-- Continuously ingests signals from GitHub, Slack, Drive, and meetings
-- Maintains a live model of each program's state: who's working on what, what decisions were made, what commitments are outstanding
-- Surfaces blockers before they're escalated
-- Follows up on action items
-- Routes context to downstream agents so they don't start from zero
-
 An agentic TPM platform is infrastructure for program engineering - not a replacement for the TPM role. With live program intelligence, agentic actions, and self-driven reports, it surfaces program visibility for everyone driving the work so they spend less time coordinating and more time executing. It scales TPM capacity without scaling headcount.
+
+It does this by:
+
+- Continuously ingesting signals from GitHub, Slack, Drive, and meetings
+- Maintaining a live model of each program's state: who's working on what, what decisions were made, what commitments are outstanding
+- Surfacing blockers before they're escalated
+- Following up on action items
+- Routing context to downstream agents so they don't start from zero
 
 [Serro](https://serro.ai) is an agentic TPM. This repo is a guide for building a version of it yourself.
 
