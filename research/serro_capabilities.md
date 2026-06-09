@@ -11,7 +11,7 @@
 | Layer | What it does | Passive or Active? |
 |---|---|---|
 | **Memory** | Ingests signals, organizes by program, keeps context queryable | Passive - responds to signals |
-| **Proactive TPM agent** | Monitors program state, alerts on drift, follows up on action items | Active - initiates without being asked |
+| **Proactive Program Coordinator Agent** | Monitors program state, alerts on drift, follows up on action items | Active - initiates without being asked |
 | **Prompt-based widgets** | User-configured views that re-execute against memory on a refresh interval | Active - surfaces state without requiring a query |
 
 Each layer depends on the one above it. Memory without ingestion is empty. The proactive agent without memory has no context. Widgets without live memory return meaningless output.
@@ -32,7 +32,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 | 6 | Collective agent governance | High | No | Claude is session-scoped |
 | 7 | Large-scale org analyses | Medium | Partial | Quality depends on ingestion working first |
 
-**Proactive TPM layer:**
+**Proactive Program Coordinator layer:**
 
 | # | Capability | Est. replication difficulty | Can Claude do it today? | Key gap (unvalidated) |
 |---|---|---|---|---|
