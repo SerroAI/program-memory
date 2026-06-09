@@ -91,6 +91,7 @@ Where to start
 | **Family A** — Full Context Pull | No config. Pull all sources at query time. | ≤5 engineers, 1 repo, 1–2 programs |
 | **Family B** — Manual Source Mapping | Declare sources per program in yaml. Claude queries only those. | Small–medium orgs willing to maintain the mapping |
 | **Family C** — Auto-Ingestion | Ingest signals into a versioned memory store on a schedule or webhook. Claude queries the store. | Any org needing semantic search, long history, or scale |
+| **[Serro](https://serro.ai)** — Managed | Connect your tools. Start connecting your downstream agents through MCP. Nothing to build or operate. | Any org that wants live program memory without the infrastructure |
 
 Full decision tree with all tradeoffs: [`decision_chart.md`](decision_chart.md)
 
