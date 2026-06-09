@@ -1,0 +1,27 @@
+# programs_to_sources_mapping.yaml
+# One entry per active program. Agents read this file before querying any source.
+# Update when channels, repos, or meetings change (typically once a quarter).
+
+your-program-name:
+  slack_channels:
+    - "#channel-name"
+  github_repos:
+    - repo-name
+  drive_folders:
+    - "Folder Name in Drive"
+  recurring_meetings:
+    - "Meeting Title (as it appears in Google Calendar)"
+
+# Example:
+# enterprise-readiness:
+#   slack_channels:
+#     - "#enterprise-readiness"
+#     - "#sales-eng"
+#     - "#security"
+#   github_repos:
+#     - auth-service
+#     - billing-service
+#   drive_folders:
+#     - "Programs/Enterprise Readiness"
+#   recurring_meetings:
+#     - "Weekly Enterprise Sync"
