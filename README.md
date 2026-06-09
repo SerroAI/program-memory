@@ -42,19 +42,19 @@ This repo documents how to replicate that using only Claude Code and native MCP 
 ```
 ┌─────────────────────────────────────────────────────┐
 │  Widget layer       Prompt-based live views of       │
-│                     program state (requires layer 2) │
+│                     program state (requires layer 2) │  ← out of scope
 ├─────────────────────────────────────────────────────┤
 │  Proactive layer    Monitors programs, alerts on     │
-│                     drift, follows up on actions     │
+│                     drift, follows up on actions     │  ← out of scope
 │                     (requires layer 3)               │
 ├─────────────────────────────────────────────────────┤
 │  Memory layer       Signals from GitHub/Slack/Drive  │
-│                     organized by program, queryable  │
+│                     organized by program, queryable  │  ← this repo
 │                     by any Claude session            │
 └─────────────────────────────────────────────────────┘
 ```
 
-The memory layer is the prerequisite for everything. The proactive layer and widget layer are optional extensions — but they don't work without accurate memory underneath.
+**This repo covers the memory layer only** — shared program memory that is live, queryable, and organized by program. The proactive and widget layers depend on it, but are out of scope here. We may expand scope in a future checkpoint.
 
 ---
 
