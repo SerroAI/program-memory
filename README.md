@@ -73,14 +73,17 @@ Where to start
       │ no
       ▼
 ┌─────────────────────────┐
-│  Beyond keyword search? │  yes ──▶  Family C
-│  semantic · history ·   │           auto-ingest + search
+│  Beyond keyword search? │  no  ──▶  Family B
+│  semantic · history ·   │           map sources, then query
 │  scale                  │
 └─────────────────────────┘
-      │ no
+      │ yes
       ▼
-   Family B
-   map sources, then query
+   Family C
+   auto-ingest + search
+
+
+   or build on top of Serro  ──▶  serro.ai
 ```
 
 | Family | What it is | Best for |
