@@ -1,6 +1,6 @@
 # Build Your Own Serro
 
-> A starter kit for building live shared program memory using Claude Code, MCP integrations, and git — no proprietary infrastructure required.
+> A starter kit for building live shared program memory using Claude Code, MCP integrations, and git - no proprietary infrastructure required.
 
 [![Status](https://img.shields.io/badge/status-checkpoint%201%20complete-yellow)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)]()
@@ -10,11 +10,11 @@
 
 ## Why Serro published this
 
-We want our customers to succeed — with or without us.
+We want our customers to succeed - with or without us.
 
 If you have the engineering bandwidth to build and operate your own live program memory, this repo gives you the full architecture: every decision point, every tradeoff, every dead end we found. You'll know exactly what you're signing up for.
 
-If, after reading this, you'd rather not operate it yourself — [Serro](https://serro.ai) is the managed version. Same capabilities, no infrastructure, with a proprietary ontology built from three years of org signals.
+If, after reading this, you'd rather not operate it yourself - [Serro](https://serro.ai) is the managed version. Same capabilities, no infrastructure, with a proprietary ontology built from three years of org signals.
 
 Either way, you'll have made an informed choice. That's the goal.
 
@@ -22,16 +22,16 @@ Either way, you'll have made an informed choice. That's the goal.
 
 ## What is live program memory?
 
-An AI-native engineering org runs multiple programs in parallel — each with its own scope, stakeholders, signals, and decisions. Live program memory means every AI agent in your org can answer questions like:
+An AI-native engineering org runs multiple programs in parallel - each with its own scope, stakeholders, signals, and decisions. Live program memory means every AI agent in your org can answer questions like:
 
 - *"What decisions did the platform team make last quarter and why?"*
-- *"Which engineers have been working on auth — and for how long?"*
+- *"Which engineers have been working on auth - and for how long?"*
 - *"What action items from last week's design review are still open?"*
 - *"Has the scope of Program X drifted from its original charter?"*
 
 Without live program memory, every Claude session starts from zero. Engineers re-explain context. Decisions get repeated. Work happens invisibly.
 
-[Serro](https://serro.ai) solves this by maintaining a continuously updated, program-indexed memory across GitHub, Slack, Google Drive, and meetings — and making it queryable by any agent in the org.
+[Serro](https://serro.ai) solves this by maintaining a continuously updated, program-indexed memory across GitHub, Slack, Google Drive, and meetings - and making it queryable by any agent in the org.
 
 This repo documents how to replicate that using only Claude Code and native MCP integrations.
 
@@ -54,7 +54,7 @@ This repo documents how to replicate that using only Claude Code and native MCP 
 └─────────────────────────────────────────────────────┘
 ```
 
-**This repo covers the memory layer only** — shared program memory that is live, queryable, and organized by program. The proactive and widget layers depend on it, but are out of scope here. We may expand scope in a future checkpoint.
+**This repo covers the memory layer only** - shared program memory that is live, queryable, and organized by program. The proactive and widget layers depend on it, but are out of scope here. We may expand scope in a future checkpoint.
 
 ---
 
@@ -88,10 +88,10 @@ Where to start
 
 | Family | What it is | Best for |
 |---|---|---|
-| **Family A** — Full Context Pull | No config. Pull all sources at query time. | ≤5 engineers, 1 repo, 1–2 programs |
-| **Family B** — Manual Source Mapping | Declare sources per program in yaml. Claude queries only those. | Small–medium orgs willing to maintain the mapping |
-| **Family C** — Auto-Ingestion | Ingest signals into a versioned memory store on a schedule or webhook. Claude queries the store. | Any org needing semantic search, long history, or scale |
-| **[Serro](https://serro.ai)** — Managed | Connect your tools. Start connecting your downstream agents through MCP. Nothing to build or operate. | Any org that wants live program memory without the infrastructure |
+| **Family A** - Full Context Pull | No config. Pull all sources at query time. | ≤5 engineers, 1 repo, 1–2 programs |
+| **Family B** - Manual Source Mapping | Declare sources per program in yaml. Claude queries only those. | Small–medium orgs willing to maintain the mapping |
+| **Family C** - Auto-Ingestion | Ingest signals into a versioned memory store on a schedule or webhook. Claude queries the store. | Any org needing semantic search, long history, or scale |
+| **[Serro](https://serro.ai)** - Managed | Connect your tools. Start connecting your downstream agents through MCP. Nothing to build or operate. | Any org that wants live program memory without the infrastructure |
 
 Full decision tree with all tradeoffs: [`decision_chart.md`](decision_chart.md)
 
@@ -101,7 +101,7 @@ Full decision tree with all tradeoffs: [`decision_chart.md`](decision_chart.md)
 
 ## What Serro does that this can't (yet)
 
-This is an honest comparison. The open-source version covers the architecture — but Serro has advantages that aren't replicable with public tooling alone:
+This is an honest comparison. The open-source version covers the architecture - but Serro has advantages that aren't replicable with public tooling alone:
 
 | Capability | Open-source (this repo) | Serro |
 |---|---|---|
@@ -109,10 +109,10 @@ This is an honest comparison. The open-source version covers the architecture �
 | Program-indexed memory | ✅ Via `programs_to_sources_mapping.yaml` | ✅ Auto-classified, org-wide |
 | Keyword search across sources | ✅ Via MCP (GitHub, Slack, Drive) | ✅ |
 | Semantic / embedding search | ⚠️ Requires self-hosted vector store (Family C) | ✅ Built-in |
-| Temporal code intelligence | ⚠️ Keyword search only — conceptual drift not detectable | ✅ Symbol-level history |
-| Engineer contribution history | ⚠️ Reconstructed from git blame + Slack — incomplete | ✅ Continuously maintained |
+| Temporal code intelligence | ⚠️ Keyword search only - conceptual drift not detectable | ✅ Symbol-level history |
+| Engineer contribution history | ⚠️ Reconstructed from git blame + Slack - incomplete | ✅ Continuously maintained |
 | Voice-driven memory updates | ❌ | ✅ |
-| Proactive program coordination | ⚠️ Schedulable via cron — not event-driven | ✅ |
+| Proactive program coordination | ⚠️ Schedulable via cron - not event-driven | ✅ |
 | Zero-config setup | ❌ Requires mapping yaml + MCP server setup | ✅ |
 
 The biggest structural gap is the data corpus. Serro has been ingesting and indexing org signals since 2023. The open-source version starts from zero. That gap matters most for temporal reasoning and contribution history.
@@ -134,7 +134,7 @@ The biggest structural gap is the data corpus. Serro has been ingesting and inde
 
 ## Quick start
 
-> **Read [`critical_review.md`](critical_review.md) first.** This repo has a conflict of interest — it's written by the people who built Serro. The review names the biases explicitly.
+> **Read [`critical_review.md`](critical_review.md) first.** This repo has a conflict of interest - it's written by the people who built Serro. The review names the biases explicitly.
 
 **1. Understand what you're replicating**
 ```
@@ -152,7 +152,7 @@ A decision tree with 14 decision points. The wrong architecture choice costs wee
 ```
 comparative_analysis.md
 ```
-MCP is pull-only — not a continuous stream. Several architectural assumptions fail because of this. Don't repeat the mistakes.
+MCP is pull-only - not a continuous stream. Several architectural assumptions fail because of this. Don't repeat the mistakes.
 
 **4. Follow implementation instructions**
 ```
@@ -183,7 +183,7 @@ templates/
 │   └── serro_capabilities.md        ← 7 capabilities, difficulty ratings, open questions
 │
 ├── family_a/
-│   └── instructions.md              ← full context pull — micro-orgs, zero config
+│   └── instructions.md              ← full context pull - micro-orgs, zero config
 │
 ├── family_b/
 │   ├── overview.md                  ← human-maintained source mapping approach
@@ -210,9 +210,9 @@ templates/
 
 ## Read this before building
 
-- [`critical_review.md`](critical_review.md) — conflict of interest, unvalidated assumptions, what would constitute real evidence
-- [`comparative_analysis.md`](comparative_analysis.md) — Approach 1 failed because MCP is pull-only. Don't design around polling as if it's continuous ingestion.
-- [`family_b/overview.md`](family_b/overview.md) — Family B has 6 known limitations. Long-horizon technical reasoning is the hardest gap to close.
+- [`critical_review.md`](critical_review.md) - conflict of interest, unvalidated assumptions, what would constitute real evidence
+- [`comparative_analysis.md`](comparative_analysis.md) - Approach 1 failed because MCP is pull-only. Don't design around polling as if it's continuous ingestion.
+- [`family_b/overview.md`](family_b/overview.md) - Family B has 6 known limitations. Long-horizon technical reasoning is the hardest gap to close.
 
 ---
 
@@ -220,10 +220,10 @@ templates/
 
 This is an open experiment. Contributions that advance it are welcome:
 
-- **Measurements** — ran Family B or C2 against a real org? Classification accuracy, coverage, and latency numbers are the most valuable thing you can add.
-- **Dead ends** — tried something that didn't work? Document it in `comparative_analysis.md`.
-- **Implementation gaps** — `family_a/instructions.md`, `family_b/instructions.md`, and `family_c/instructions.md` need step-by-step instructions written.
-- **Alternative architectures** — `family_c/overview.md` has a placeholder for approaches not yet identified.
+- **Measurements** - ran Family B or C2 against a real org? Classification accuracy, coverage, and latency numbers are the most valuable thing you can add.
+- **Dead ends** - tried something that didn't work? Document it in `comparative_analysis.md`.
+- **Implementation gaps** - `family_a/instructions.md`, `family_b/instructions.md`, and `family_c/instructions.md` need step-by-step instructions written.
+- **Alternative architectures** - `family_c/overview.md` has a placeholder for approaches not yet identified.
 
 Please do not contribute claims without measurements. The value of this repo is honest engineering, not optimistic design.
 
@@ -237,6 +237,6 @@ MIT. Use it, fork it, build on it.
 
 ## Related
 
-- [Serro](https://serro.ai) — the managed version of what this repo attempts to build
-- [Claude Code](https://claude.ai/code) — the tool this is built with
-- [Model Context Protocol](https://modelcontextprotocol.io) — the integration layer all approaches depend on
+- [Serro](https://serro.ai) - the managed version of what this repo attempts to build
+- [Claude Code](https://claude.ai/code) - the tool this is built with
+- [Model Context Protocol](https://modelcontextprotocol.io) - the integration layer all approaches depend on

@@ -1,4 +1,4 @@
-# C2 — Shared Git Repo + Scheduled Claude Agent
+# C2 - Shared Git Repo + Scheduled Claude Agent
 
 **Latency:** Up to 60 min | **Complexity:** Low | **Infrastructure:** Nothing (just cron)
 
@@ -26,22 +26,22 @@ Any agent anywhere: git pull → reads updated memory
 ```
 
 ## Why the git layer matters
-- Every memory update is a commit — full history of how org memory evolved over time
+- Every memory update is a commit - full history of how org memory evolved over time
 - `git diff` shows exactly what was learned between any two runs
 - Any agent on any machine reads the same state via `git pull`
 - Human-readable, auditable, no database required
 
 ## Pros
-- Zero new infrastructure — just a cron and a git repo
+- Zero new infrastructure - just a cron and a git repo
 - Fully Claude Code native
 - Git history gives you versioned memory for free
 - Easiest migration path to C3 (storage layer stays identical)
 
 ## Cons
-- Polling — up to 60-minute lag (tunable: run every 15 min if needed)
-- Still uses `programs_to_sources_mapping.yaml` to know what to poll — technically a hybrid of Family B and B
+- Polling - up to 60-minute lag (tunable: run every 15 min if needed)
+- Still uses `programs_to_sources_mapping.yaml` to know what to poll - technically a hybrid of Family B and B
 - Slack/Drive polling limited by API search constraints (Slack free tier: 90-day history)
-- Frequent small commits — noisy git history
+- Frequent small commits - noisy git history
 
 ## Verdict
 Most attainable right now. Accepts polling latency as a known tradeoff. **Start here.**

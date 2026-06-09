@@ -1,9 +1,9 @@
-# C3 — GitHub Actions + Stateless Serverless Forwarder
+# C3 - GitHub Actions + Stateless Serverless Forwarder
 
 **Latency:** 1–2 min | **Complexity:** Medium | **Infrastructure:** ~10-line Cloudflare Worker
 
 ## What it is
-GitHub Actions serves as the compute layer — no server to operate. GitHub events trigger Actions natively. Slack and Drive events are forwarded to GitHub via a tiny stateless Cloudflare Worker that POSTs to GitHub's `repository_dispatch` API. The Action runs `claude ingest`, writes to .md files, and commits back to the repo.
+GitHub Actions serves as the compute layer - no server to operate. GitHub events trigger Actions natively. Slack and Drive events are forwarded to GitHub via a tiny stateless Cloudflare Worker that POSTs to GitHub's `repository_dispatch` API. The Action runs `claude ingest`, writes to .md files, and commits back to the repo.
 
 ## Architecture
 ```
@@ -27,7 +27,7 @@ GitHub Actions serves as the compute layer — no server to operate. GitHub even
 ```
 
 ## Key distinction from C1
-GitHub Actions runs in GitHub's cloud — it never touches your local machine. The only thing you write and own is the Cloudflare Worker. GitHub manages the compute.
+GitHub Actions runs in GitHub's cloud - it never touches your local machine. The only thing you write and own is the Cloudflare Worker. GitHub manages the compute.
 
 ## Pros
 - Near-real-time for GitHub events (triggers instantly on push/PR)
@@ -41,7 +41,7 @@ GitHub Actions runs in GitHub's cloud — it never touches your local machine. T
 - More moving parts than C2 (Worker + Actions workflow + secrets)
 - Claude Code CLI install adds ~30s to each Actions run
 - MCP servers need configuring in the runner environment
-- ~30s GitHub Actions cold start — not sub-second
+- ~30s GitHub Actions cold start - not sub-second
 
 ## Verdict
 Best balance of latency and operational simplicity for teams already on GitHub. Upgrade from C2 when hourly polling becomes a problem.

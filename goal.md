@@ -1,7 +1,7 @@
 # Project Goal
 
 ## Mission
-Build a fully open-sourced Serro replica using only Claude Code and its native integrations — then document the entire process as a YouTube video script and blog post.
+Build a fully open-sourced Serro replica using only Claude Code and its native integrations - then document the entire process as a YouTube video script and blog post.
 
 ## The Deliverable
 A public repo containing:
@@ -13,7 +13,7 @@ A public repo containing:
 That, together, replicate (or surpass) everything Serro does.
 
 ## The Video/Post Angle
-"I killed Serro with Claude Code" — a walkthrough showing how Claude's built-in tools, MCP integrations, and custom skills cover every core Serro capability, for free, open-sourced.
+"I killed Serro with Claude Code" - a walkthrough showing how Claude's built-in tools, MCP integrations, and custom skills cover every core Serro capability, for free, open-sourced.
 
 ## Personal Goal (Jake)
 Kill Serro commercially by open-sourcing the full stack of skills, configs, and documentation so anyone can self-host an equivalent setup on Claude Code.

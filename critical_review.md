@@ -1,10 +1,10 @@
-# Critical Review — Honest Assessment of This Analysis
+# Critical Review - Honest Assessment of This Analysis
 
 > Written to surface bias, unvalidated assumptions, and gaps in reasoning. The goal of this project is to openly attempt to replicate Serro using Claude Code. That goal creates pressure toward optimistic conclusions. This document exists to push back on that pressure.
 
 ---
 
-## Conflict of Interest — State It Plainly
+## Conflict of Interest - State It Plainly
 
 The author of this analysis works at or closely with Serro and wants to open-source a competitor. That is a direct conflict of interest. Readers should know this.
 
@@ -48,7 +48,7 @@ An org that has been running Serro for 12 months has:
 - Contributor graphs built from real signal history
 - Proactive alerts that have been tuned against real false positives
 
-Our replica starts at zero. Not slightly behind — completely empty. The first month of the replica is a weaker product by definition, regardless of architecture quality. The second month is still weaker. The corpus gap compounds over time in Serro's favor.
+Our replica starts at zero. Not slightly behind - completely empty. The first month of the replica is a weaker product by definition, regardless of architecture quality. The second month is still weaker. The corpus gap compounds over time in Serro's favor.
 
 **The honest framing:** We are not building something that immediately replaces Serro. We are building something that, given enough time and discipline from the team running it, might eventually match Serro's utility. "Might" and "eventually" are load-bearing words that our current framing obscures.
 
@@ -62,7 +62,7 @@ The capability table uses "Partial" to describe Claude's coverage of 7 out of 10
 
 - Collective agent governance: Claude has no shared persistent state between sessions. CLAUDE.md convention is a social contract. Calling this "partial" rather than "absent" is optimistic.
 
-- Large-scale org analyses: Claude can run a workflow script against accumulated markdown files. If the files are sparse or miscategorized, the analysis is garbage. Quality depends entirely on the ingestion pipeline working correctly — which we haven't built.
+- Large-scale org analyses: Claude can run a workflow script against accumulated markdown files. If the files are sparse or miscategorized, the analysis is garbage. Quality depends entirely on the ingestion pipeline working correctly - which we haven't built.
 
 **What honest scoring looks like:** "Partial" should mean "meaningfully covers this capability with known gaps." It should not mean "we can gesture at this capability with enough effort." Several of our "Partial" ratings are closer to "No, but conceivably yes if everything works."
 
@@ -87,7 +87,7 @@ These are different tests with different answers. Feature parity is achievable o
 
 We spent significant effort on C1/C2/C3 ingestion architectures. We may have been solving the wrong problem.
 
-Ingestion is the data pipeline. But Serro's value is not the pipeline — it's what the pipeline produces: reliable, accurately classified, continuously curated program memory. Two systems can use identical ingestion architectures and produce wildly different memory quality depending on:
+Ingestion is the data pipeline. But Serro's value is not the pipeline - it's what the pipeline produces: reliable, accurately classified, continuously curated program memory. Two systems can use identical ingestion architectures and produce wildly different memory quality depending on:
 
 - How accurately signals are classified into programs
 - How well the system handles ambiguous or cross-program signals
@@ -102,9 +102,9 @@ We designed the pipes. We have not designed the water quality. Classification ac
 
 We acknowledged that Claude is session-scoped and reactive, and that the proactive TPM layer is "the hardest to replicate." We then continued designing the memory layer.
 
-But here is the honest version: **without the proactive layer, the replica is not a TPM — it's a search index.** A well-organized, program-indexed search index, but a search index. You query it when you remember to. It doesn't watch your programs. It doesn't tell you when something is at risk. It doesn't follow up on commitments.
+But here is the honest version: **without the proactive layer, the replica is not a TPM - it's a search index.** A well-organized, program-indexed search index, but a search index. You query it when you remember to. It doesn't watch your programs. It doesn't tell you when something is at risk. It doesn't follow up on commitments.
 
-The claim that this project can "kill Serro" requires the proactive layer to work. The memory layer alone does not kill Serro — it reproduces one of Serro's foundation pieces, which Serro can simply improve faster than we can build.
+The claim that this project can "kill Serro" requires the proactive layer to work. The memory layer alone does not kill Serro - it reproduces one of Serro's foundation pieces, which Serro can simply improve faster than we can build.
 
 ---
 
@@ -118,15 +118,15 @@ This analysis is a one-time snapshot. Serro is not.
 
 ## What Would Make This Analysis More Credible
 
-1. **Run one integration end to end** — pick GitHub MCP, connect it to a real repo, classify 20 PRs into programs, measure classification accuracy. Report the number, including failures.
+1. **Run one integration end to end** - pick GitHub MCP, connect it to a real repo, classify 20 PRs into programs, measure classification accuracy. Report the number, including failures.
 
-2. **Define the falsification test** — state explicitly: "If we cannot achieve X on a real org within Y months, we conclude the approach does not work." If there's no test that could fail, it's not science.
+2. **Define the falsification test** - state explicitly: "If we cannot achieve X on a real org within Y months, we conclude the approach does not work." If there's no test that could fail, it's not science.
 
-3. **Get an external reviewer** — someone who has used Serro as a customer, with no stake in the outcome, should read the capability map and say whether it's accurate.
+3. **Get an external reviewer** - someone who has used Serro as a customer, with no stake in the outcome, should read the capability map and say whether it's accurate.
 
-4. **Acknowledge version 1 limitations honestly** — the first working version of this replica will be worse than Serro for most use cases. Say that directly, not in a footnote.
+4. **Acknowledge version 1 limitations honestly** - the first working version of this replica will be worse than Serro for most use cases. Say that directly, not in a footnote.
 
-5. **Track the corpus gap explicitly** — if the replica is running, report regularly on how many signals have been ingested vs. what a Serro org of the same size would have. Make the head start visible.
+5. **Track the corpus gap explicitly** - if the replica is running, report regularly on how many signals have been ingested vs. what a Serro org of the same size would have. Make the head start visible.
 
 ---
 
@@ -136,4 +136,4 @@ This analysis is a credible first-principles design of a Serro-like system built
 
 It is not evidence that a Claude replica can match Serro. It is a hypothesis that it might be possible, paired with a set of architectural options for testing that hypothesis.
 
-The strongest version of this project is one that runs the experiment honestly, reports what breaks, and says clearly when something doesn't work. That's what would make readers — and Serro's customers — take it seriously. A project that only reports wins is marketing. A project that reports failures and keeps going anyway is science.
+The strongest version of this project is one that runs the experiment honestly, reports what breaks, and says clearly when something doesn't work. That's what would make readers - and Serro's customers - take it seriously. A project that only reports wins is marketing. A project that reports failures and keeps going anyway is science.

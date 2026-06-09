@@ -1,4 +1,4 @@
-# C1 — Webhook Server
+# C1 - Webhook Server
 
 **Latency:** Seconds | **Complexity:** High | **Infrastructure:** Always-on server
 
@@ -28,7 +28,7 @@ Google Drive push notifications ────────────────
 - Handles all three sources uniformly
 
 ## Cons
-- You operate a server 24/7 — uptime, restarts, monitoring are your problem
+- You operate a server 24/7 - uptime, restarts, monitoring are your problem
 - Webhook signature validation required for security (boilerplate but necessary)
 - Drive push notification channels expire every 24h and need renewal
 

@@ -1,7 +1,7 @@
 # Program: <Name>
 
 **Owner:** @handle
-**Outcome:** <One sentence — what does success look like when this program ends?>
+**Outcome:** <One sentence - what does success look like when this program ends?>
 **In scope:** <What this program covers>
 **Out of scope:** <What it explicitly does not cover>
 **Started:** YYYY-MM-DD
@@ -11,7 +11,7 @@
 - ...
 
 ## Active contributors
-- @handle — role
+- @handle - role
 
 ## Key decisions log
 | Date | Decision | Made by |

@@ -1,4 +1,4 @@
-# Capability Analysis — AI Technical Program Manager
+# Capability Analysis - AI Technical Program Manager
 
 > This document maps the capabilities of an AI TPM (Technical Program Manager) system as described by Serro's public blog and founder statements. These are the capabilities we are attempting to replicate or match using Claude Code and open-source tooling.
 >
@@ -10,15 +10,15 @@
 
 | Layer | What it does | Passive or Active? |
 |---|---|---|
-| **Memory** | Ingests signals, organizes by program, keeps context queryable | Passive — responds to signals |
-| **Proactive TPM agent** | Monitors program state, alerts on drift, follows up on action items | Active — initiates without being asked |
-| **Prompt-based widgets** | User-configured views that re-execute against memory on a refresh interval | Active — surfaces state without requiring a query |
+| **Memory** | Ingests signals, organizes by program, keeps context queryable | Passive - responds to signals |
+| **Proactive TPM agent** | Monitors program state, alerts on drift, follows up on action items | Active - initiates without being asked |
+| **Prompt-based widgets** | User-configured views that re-execute against memory on a refresh interval | Active - surfaces state without requiring a query |
 
 Each layer depends on the one above it. Memory without ingestion is empty. The proactive agent without memory has no context. Widgets without live memory return meaningless output.
 
 ---
 
-## TL;DR — 10 Capabilities
+## TL;DR - 10 Capabilities
 
 **Memory layer:**
 
@@ -28,7 +28,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 | 2 | Continuous signal ingestion | High | Partial | No auto-classification or dedup |
 | 3 | Temporal code symbol understanding | High | Partial | No program context layer on top of git |
 | 4 | Contributor expertise graph | High | Partial | No cross-signal join |
-| 5 | Voice-driven live memory updates | Medium | No | Full gap — untested |
+| 5 | Voice-driven live memory updates | Medium | No | Full gap - untested |
 | 6 | Collective agent governance | High | No | Claude is session-scoped |
 | 7 | Large-scale org analyses | Medium | Partial | Quality depends on ingestion working first |
 
@@ -43,7 +43,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 
 | # | Capability | Est. replication difficulty | Can Claude do it today? | Key gap (unvalidated) |
 |---|---|---|---|---|
-| 10 | Live prompt-based widgets | High | No | Full-stack application — depends on memory layer existing first |
+| 10 | Live prompt-based widgets | High | No | Full-stack application - depends on memory layer existing first |
 
 **Measurement dimensions for every capability:** Accuracy · Coverage · Latency/Staleness
 
@@ -54,11 +54,11 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ---
 
 ### 1. Program-Structured Memory
-**What it does (described):** Organizational signals — decisions, code changes, meetings, tickets, threads — are indexed to a named program rather than stored flat. Retrievable by program context.
+**What it does (described):** Organizational signals - decisions, code changes, meetings, tickets, threads - are indexed to a named program rather than stored flat. Retrievable by program context.
 
 **Why this might matter:** Flat memory stores (Notion, Confluence, raw search) require humans to do the joining. Program-indexed memory lets a query like "what's the state of Enterprise Readiness?" return a scoped answer. Whether this framing is meaningfully better than tagging or folder structure is an empirical question, not a given.
 
-**Replication difficulty:** Medium. The concept is straightforward. The difficulty is auto-curation — getting signals classified correctly into programs without human filing. Without that, program-structured memory is just a filing convention that requires discipline to maintain.
+**Replication difficulty:** Medium. The concept is straightforward. The difficulty is auto-curation - getting signals classified correctly into programs without human filing. Without that, program-structured memory is just a filing convention that requires discipline to maintain.
 
 **Open questions:**
 - How accurate is Serro's auto-classification in practice? We don't know.
@@ -74,7 +74,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ### 2. Continuous Signal Ingestion & Auto-Curation
 **What it does (described):** Signals from GitHub, Jira, Slack, and meeting transcripts auto-classify into the correct program's memory without human filing.
 
-**Why this might matter:** Manual curation of a program wiki typically degrades within weeks. Automatic ingestion, if it works reliably, removes the maintenance burden. The word "if" is load-bearing — classification accuracy, deduplication, and handling of ambiguous signals are unsolved engineering problems.
+**Why this might matter:** Manual curation of a program wiki typically degrades within weeks. Automatic ingestion, if it works reliably, removes the maintenance burden. The word "if" is load-bearing - classification accuracy, deduplication, and handling of ambiguous signals are unsolved engineering problems.
 
 **Replication difficulty:** High. Requires reliable integrations, a classification step, and deduplication. Whether Serro's classification is accurate at scale is unknown from public information. Building a version that works is tractable; building one that works well is harder.
 
@@ -91,9 +91,9 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ---
 
 ### 3. Temporal Code Symbol Understanding
-**What it does (described):** A time-indexed map of code symbols — who created or modified each one, when, in which sprint, for which program.
+**What it does (described):** A time-indexed map of code symbols - who created or modified each one, when, in which sprint, for which program.
 
-**Why this might matter:** `git blame` gives author and date. Program context layered on top could answer "why was this function changed" rather than just "who changed it." The value depends on classification accuracy from capability 2 — if signals aren't correctly attributed to programs, the program context layer is wrong.
+**Why this might matter:** `git blame` gives author and date. Program context layered on top could answer "why was this function changed" rather than just "who changed it." The value depends on classification accuracy from capability 2 - if signals aren't correctly attributed to programs, the program context layer is wrong.
 
 **Replication difficulty:** High. `git log` and `git blame` give the raw data. The hard part is reliably joining commit history to program assignments, especially for commits that predate the program taxonomy or touch multiple programs. We do not know how well a production system actually achieves this.
 
@@ -110,15 +110,15 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ---
 
 ### 4. Contributor Expertise Graph
-**What it does (described):** A cross-signal map of who has worked on what — by program, by code area, by time period — joined across GitHub, Slack, and docs.
+**What it does (described):** A cross-signal map of who has worked on what - by program, by code area, by time period - joined across GitHub, Slack, and docs.
 
-**Why this might matter:** Reviewer selection, escalation, and onboarding decisions benefit from knowing who has context in an area. Any single source (GitHub commits, Jira assignees) is a partial picture. Cross-source joining produces a more complete one — assuming the join is accurate.
+**Why this might matter:** Reviewer selection, escalation, and onboarding decisions benefit from knowing who has context in an area. Any single source (GitHub commits, Jira assignees) is a partial picture. Cross-source joining produces a more complete one - assuming the join is accurate.
 
 **Replication difficulty:** High. The join across GitHub + Slack + docs requires identity resolution (mapping GitHub handles to Slack handles) and weighting decisions (is a Slack message worth as much as a commit?). The quality of the resulting graph is sensitive to these choices and hard to validate without ground truth.
 
 **Open questions:**
 - How does identity resolution work across systems with different handles?
-- How is expertise weighted — recency vs. volume vs. depth?
+- How is expertise weighted - recency vs. volume vs. depth?
 - Does this graph produce demonstrably better reviewer recommendations than GitHub's built-in suggestions?
 
 **Measure:**
@@ -131,7 +131,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ### 5. Voice-Driven Live Memory Updates
 **What it does (described):** Program owners update program memory via voice in real time. The update propagates to memory immediately.
 
-**Why this might matter:** The moment of context — a decision made in a meeting — is often not at a desk. If capture requires opening a tool, it frequently doesn't happen.
+**Why this might matter:** The moment of context - a decision made in a meeting - is often not at a desk. If capture requires opening a tool, it frequently doesn't happen.
 
 **Replication difficulty:** Medium. Voice transcription (Whisper or equivalent) is commodity. The hard parts are: structured extraction from free-form speech (deciding what to write to memory and where), accuracy (no hallucinated scope changes), and propagation latency. Whether any production system handles these reliably is unverified.
 
@@ -148,16 +148,16 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ---
 
 ### 6. Collective Agent Governance via Shared Program Memory
-**What it does (described):** Downstream agents — code reviewer, sprint planner, onboarding agent — read the same live program memory as shared context rather than operating with isolated per-session state.
+**What it does (described):** Downstream agents - code reviewer, sprint planner, onboarding agent - read the same live program memory as shared context rather than operating with isolated per-session state.
 
 **Why this might matter:** Per-session stateless agents can produce individually good but collectively incoherent outputs. Shared memory could give a fleet of agents consistent context. Whether this produces meaningfully better outcomes than well-prompted individual agents is an empirical question.
 
-**Replication difficulty:** High. Claude is session-scoped. A CLAUDE.md convention provides shared instructions but not shared state. Genuine shared memory requires an architecture decision — a persistent store that multiple agents read from, with a defined update model and permissions layer.
+**Replication difficulty:** High. Claude is session-scoped. A CLAUDE.md convention provides shared instructions but not shared state. Genuine shared memory requires an architecture decision - a persistent store that multiple agents read from, with a defined update model and permissions layer.
 
 **Open questions:**
 - Is collective governance meaningfully better than per-session prompting in practice?
 - What happens when two agents update memory simultaneously?
-- How does permissions work — can all agents read all programs?
+- How does permissions work - can all agents read all programs?
 
 **Measure:**
 - Context consistency: do two agents querying the same program at the same time return consistent facts?
@@ -167,7 +167,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ---
 
 ### 7. Large-Scale Org Analyses
-**What it does (described):** On-demand rollups — "what has engineering spent time on this quarter, by program?" or "where has R&D investment gone?" — across the full signal corpus.
+**What it does (described):** On-demand rollups - "what has engineering spent time on this quarter, by program?" or "where has R&D investment gone?" - across the full signal corpus.
 
 **Why this might matter:** Leadership decisions about headcount and investment require this kind of data. Currently it either doesn't exist or requires bespoke dashboards. An on-demand query layer is faster.
 
@@ -176,7 +176,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 **Open questions:**
 - How accurate is effort attribution when signal classification has errors?
 - How does the system handle work that wasn't captured in any integrated signal source?
-- What does a quarterly analysis actually look like — does it produce actionable output or noise?
+- What does a quarterly analysis actually look like - does it produce actionable output or noise?
 
 **Measure:**
 - Coverage: % of real work effort captured vs. estimated ground truth
@@ -188,7 +188,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ### 8. Program Health Monitoring + Proactive Alerts
 **What it does (described):** The system continuously monitors program state against the program's charter. Without being asked, it surfaces programs drifting from scope, stalled action items, dependencies at risk, contributors who've gone silent.
 
-**Why this might matter:** A passive memory store requires someone to query it. Proactive monitoring removes that requirement — the system tells you when something is wrong rather than waiting to be asked.
+**Why this might matter:** A passive memory store requires someone to query it. Proactive monitoring removes that requirement - the system tells you when something is wrong rather than waiting to be asked.
 
 **Replication difficulty:** High. Requires an always-on process (not a Claude session), a defined notion of "drift" or "at risk" that can be evaluated programmatically, and outbound communication capability. Defining what "at risk" means in a way that produces useful alerts without noise is a product problem, not just an engineering one.
 
@@ -226,7 +226,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 ### 10. Live Prompt-Based Widgets
 **What it does (described):** Users configure views by writing a prompt. The widget executes that prompt against live program memory on a refresh interval and displays the result without requiring a query.
 
-**Why this might matter:** Program state made ambient — visible in a sidebar or dashboard — without requiring anyone to ask. The "prompt-based" distinction means any view is configurable in natural language, not by a data team.
+**Why this might matter:** Program state made ambient - visible in a sidebar or dashboard - without requiring anyone to ask. The "prompt-based" distinction means any view is configurable in natural language, not by a data team.
 
 **Critical dependency:** This capability is entirely contingent on capabilities 1 and 2 working correctly. A widget querying empty or miscategorized memory returns meaningless output. Do not design or build this until the memory layer is validated.
 
@@ -246,14 +246,14 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 
 ## What the Analysis Suggests
 
-The memory and ingestion layers (1–2) are a prerequisite for everything else. Quality of the whole system is bounded by classification accuracy and signal coverage — two things we have not measured.
+The memory and ingestion layers (1–2) are a prerequisite for everything else. Quality of the whole system is bounded by classification accuracy and signal coverage - two things we have not measured.
 
 The proactive TPM layer (8–9) is architecturally the hardest to replicate because Claude is session-scoped. A scheduled agent approximates it but is not the same thing.
 
 The widget layer (10) is last and depends on everything before it.
 
 **Build order:**
-1. Memory structure + signal ingestion — together, as one layer
+1. Memory structure + signal ingestion - together, as one layer
 2. Reactive queries against that memory
 3. Proactive monitoring via scheduled agent
 4. Action item tracking and follow-through
