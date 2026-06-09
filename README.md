@@ -14,7 +14,7 @@ We want our customers to succeed — with or without us.
 
 If you have the engineering bandwidth to build and operate your own live program memory, this repo gives you the full architecture: every decision point, every tradeoff, every dead end we found. You'll know exactly what you're signing up for.
 
-If, after reading this, you'd rather not operate it yourself — [Serro](https://serro.ai) is the managed version. Same capabilities, no infrastructure, with a proprietary data corpus we've been building since 2023.
+If, after reading this, you'd rather not operate it yourself — [Serro](https://serro.ai) is the managed version. Same capabilities, no infrastructure, with a proprietary ontology built from three years of org signals.
 
 Either way, you'll have made an informed choice. That's the goal.
 
