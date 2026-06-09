@@ -239,9 +239,19 @@ Examples: "Platform Reliability", "Auth Modernization", "AI Discoverability", "M
 
 ### What is program engineering?
 
-Program engineering is the practice of coordinating multiple concurrent technical programs across an engineering org. It means tracking scope, decisions, blockers, contributors, and commitments at the program level - not just individual tickets or pull requests.
+Program engineering used to be a large-company problem. You hit it somewhere around 150 engineers when the org got complex enough that coordination started breaking down. Before that, a good senior engineer or EM could hold the picture in their head.
 
-A Technical Program Manager (TPM) is the human role that traditionally owns this. At most engineering orgs it happens manually: meeting notes, status updates, Slack threads, and tribal knowledge. When the TPM leaves, the context goes with them.
+That threshold is gone.
+
+AI has decoupled team size from execution capacity. A 10-person engineering team today can move at a speed and breadth that would have required 80 people five years ago. The ambition expands to meet the new capacity. And the moment you're running eight things at once with a team of ten, you have an 80-person company's coordination problems with none of the organizational infrastructure that large companies built to handle them.
+
+This is the shift from product engineering to program engineering.
+
+Product engineering gets the software built. Program engineering keeps the broader system moving: priorities, dependencies, sequencing, risk, alignment, and delivery visibility across teams and functions. When a program has no name, no owner, and no shared visibility, it still gets run - by whoever has enough context to hold the picture. That person becomes the accidental program engineer, doing it on top of their actual job, and all the institutional knowledge lives in their head.
+
+An agentic TPM platform is infrastructure for program engineering - not a replacement for the TPM role. With live program intelligence, agentic actions, and self-driven reports, it surfaces program visibility for everyone driving the work so they spend less time coordinating and more time executing. It scales TPM capacity without scaling headcount.
+
+[Read the full essay - Welcome to Program Engineering](https://serro.ai/blog/welcome-to-program-engineering)
 
 ---
 
