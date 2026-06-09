@@ -218,6 +218,80 @@ templates/
 
 ---
 
+## Concepts
+
+- [What is a program?](#what-is-a-program)
+- [What is program engineering?](#what-is-program-engineering)
+- [What is an agentic TPM?](#what-is-an-agentic-tpm)
+- [What is live program memory?](#what-is-live-program-memory-1)
+- [Why not just use Jira, Linear, or Notion?](#why-not-just-use-jira-linear-or-notion)
+- [What is MCP and why does it matter here?](#what-is-mcp-and-why-does-it-matter-here)
+
+---
+
+### What is a program?
+
+A program is a named, ongoing technical initiative with a defined scope, a set of owning engineers, and signals distributed across multiple tools. Unlike a ticket (which tracks one task) or a project (which has a hard end date), a program is continuous. It has a charter, stakeholders, and a living record of decisions, commitments, and scope changes.
+
+Examples: "Platform Reliability", "Auth Modernization", "AI Discoverability", "Mobile Launch Q3".
+
+---
+
+### What is program engineering?
+
+Program engineering is the practice of coordinating multiple concurrent technical programs across an engineering org. It means tracking scope, decisions, blockers, contributors, and commitments at the program level - not just individual tickets or pull requests.
+
+A Technical Program Manager (TPM) is the human role that traditionally owns this. At most engineering orgs it happens manually: meeting notes, status updates, Slack threads, and tribal knowledge. When the TPM leaves, the context goes with them.
+
+---
+
+### What is an agentic TPM?
+
+An agentic TPM is an AI agent that performs the coordination work of a Technical Program Manager automatically. It:
+
+- Continuously ingests signals from GitHub, Slack, Drive, and meetings
+- Maintains a live model of each program's state: who's working on what, what decisions were made, what commitments are outstanding
+- Surfaces blockers before they're escalated
+- Follows up on action items
+- Routes context to downstream agents so they don't start from zero
+
+[Serro](https://serro.ai) is an agentic TPM. This repo is a guide for building a version of it yourself.
+
+---
+
+### What is live program memory?
+
+Live program memory is an always-current, program-indexed record of everything that matters to a program: decisions, contributors, scope changes, blockers, and action items.
+
+"Live" means it updates automatically as signals arrive - not a static doc someone has to remember to update.
+
+"Program-indexed" means signals are organized by program, not by tool or date. A question like "what changed about the auth program last quarter?" draws from GitHub, Slack, Drive, and meeting transcripts simultaneously.
+
+This is the problem this repo is trying to solve.
+
+---
+
+### Why not just use Jira, Linear, or Notion?
+
+Those tools track work at the ticket or document level. They don't maintain a cross-source model of program state over time. Connecting signals - a GitHub PR to a Jira ticket to a Slack decision to a meeting transcript - is still manual.
+
+An agentic TPM does that connection automatically and makes the result queryable.
+
+Jira answers: *"what's the status of this ticket?"*
+An agentic TPM answers: *"what has changed about the auth program over the last quarter, and why?"*
+
+---
+
+### What is MCP and why does it matter here?
+
+MCP (Model Context Protocol) is an open protocol that lets Claude connect to external tools - GitHub, Slack, Google Drive, meetings - and query them in real time. Instead of copy-pasting context into a chat window, Claude reads from live sources directly.
+
+This repo uses MCP integrations as the data layer for all three implementation families.
+
+The key constraint: **MCP is pull-only.** Claude reads from tools when asked; it does not receive a continuous stream of events. That single constraint shapes every architectural decision in this repo - it's why Family C (auto-ingestion) exists at all.
+
+---
+
 ## Contributing
 
 This is an open experiment. Contributions that advance it are welcome:
