@@ -239,6 +239,8 @@ Examples: "Platform Reliability", "Auth Modernization", "AI Discoverability", "M
 
 ### What is program engineering?
 
+Program engineering is what happens when multiple workstreams all point at the same outcome and none of them, fixed in isolation, achieves it. A program gives that work a name, an owner, a sequence, and honest visibility into whether it's on track. Unlike a project, it doesn't end — it recurs. And every time it runs without a shared memory of how it ran before, the coordination cost compounds from scratch.
+
 Program engineering used to be a large-company problem. You hit it somewhere around 80 engineers when the org got complex enough that coordination started breaking down. Before that, a good senior engineer or EM could hold the picture in their head.
 
 That threshold is gone.
