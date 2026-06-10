@@ -76,8 +76,6 @@ Most orgs start at Level 1 and move up when they hit the limit. The mapping file
 
 Full decision tree: [`decision_chart.md`](decision_chart.md)
 
-![Architecture Decision Chart](decision_chart_v2.png)
-
 ---
 
 ## What Serro does that this can't (yet)

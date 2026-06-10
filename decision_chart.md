@@ -24,9 +24,6 @@ The chart routes you to one of these. Read this before following the decisions.
 
 ---
 
-![Architecture Decision Chart](decision_chart.png)
-
-> The Mermaid source below is the canonical version (includes Family A added after this image was exported). The image above is checkpoint 1.
 
 ```mermaid
 flowchart TD
