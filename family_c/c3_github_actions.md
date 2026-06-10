@@ -32,15 +32,14 @@ GitHub Actions serves as the compute layer - no server to operate. GitHub events
 serro-diy/
   CLAUDE.md               ← how Claude answers program questions
   INGEST_PROMPT.md        ← ingestion instructions the GitHub Action passes to claude
-  program_mappings.yaml   ← owner, charter, and sources per program
-  people_mappings.yaml    ← contributors, leads, and Slack IDs per program
+  program_mappings.yaml   ← owner, charter, people, and sources per program
   digests/                ← written by claude on each triggered run
   .github/
     workflows/
       ingest.yml          ← the Action that runs claude on each event
 ```
 
-`CLAUDE.md`, `program_mappings.yaml`, and `people_mappings.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and `program_mappings.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 `INGEST_PROMPT.md` is the ingestion instruction file the GitHub Action reads and passes to `claude`. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-serro-diy-repo) — copy that template, then add an event context instruction at the end:
 

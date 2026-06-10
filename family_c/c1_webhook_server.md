@@ -28,12 +28,11 @@ Google Drive push notifications ────────────────
 serro-diy/
   CLAUDE.md               ← how Claude answers program questions
   INGEST_PROMPT.md        ← ingestion instructions the server passes to claude per event
-  program_mappings.yaml   ← owner, charter, and sources per program
-  people_mappings.yaml    ← contributors, leads, and Slack IDs per program
+  program_mappings.yaml   ← owner, charter, people, and sources per program
   digests/                ← written by claude on each webhook-triggered run
 ```
 
-`CLAUDE.md`, `program_mappings.yaml`, and `people_mappings.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and `program_mappings.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 **MCP configuration:** Configure GitHub, Slack, and Drive connectors in Claude Code settings → Connectors (or `claude mcp add`) before running the server. Claude Code persists these in your user config; the `claude -p` subprocess inherits them automatically.
 

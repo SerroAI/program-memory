@@ -1,10 +1,21 @@
 # program_mappings.yaml
-# One entry per active program. Agents read this file before querying any source.
-# Update when channels, repos, or meetings change (typically once a quarter).
+# One file, one source of truth per program.
+# Update when people, sources, or charters change.
 
 your-program-name:
+  # Who owns and works on this program
   owner: "@handle"
   charter: "One sentence: what this program is and why it matters. Quarter target."
+  leads:
+    - "@handle"
+  contributors:
+    - "@handle"
+  notify:                      # pinged when action items go stale
+    - "@handle"
+  slack_ids:                   # needed to send DM follow-ups via Slack API
+    "@handle": "UXXXXXXXXXX"   # right-click user in Slack → View profile → Copy ID
+
+  # Where signals live
   github:
     repos:
       - org/repo-name
@@ -19,11 +30,23 @@ your-program-name:
     series:
       - "Meeting Title (as it appears in Google Calendar)"
 
-# Example:
+# ---
+# Examples:
 #
 # enterprise-readiness:
 #   owner: "@sarah"
 #   charter: "SOC 2 Type II compliance and enterprise contract readiness by Q3."
+#   leads:
+#     - "@marcus"
+#   contributors:
+#     - "@alex"
+#     - "@jordan"
+#   notify:
+#     - "@sarah"
+#     - "@marcus"
+#   slack_ids:
+#     "@sarah": "U04A1B2C3D4"
+#     "@marcus": "U05E6F7G8H9"
 #   github:
 #     repos:
 #       - org/auth-service
@@ -44,6 +67,16 @@ your-program-name:
 # platform-reliability:
 #   owner: "@marcus"
 #   charter: "Reduce p99 API latency below 200ms org-wide. Ongoing."
+#   leads:
+#     - "@jordan"
+#   contributors:
+#     - "@alex"
+#     - "@devon"
+#   notify:
+#     - "@marcus"
+#   slack_ids:
+#     "@marcus": "U05E6F7G8H9"
+#     "@jordan": "U06I1J2K3L4"
 #   github:
 #     repos:
 #       - org/backend
@@ -58,3 +91,6 @@ your-program-name:
 #     folders:
 #       - "Engineering/Reliability"
 #       - "Engineering/Postmortems"
+#   meetings:
+#     series:
+#       - "Platform Reliability Review"

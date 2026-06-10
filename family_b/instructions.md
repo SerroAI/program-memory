@@ -46,10 +46,9 @@ Structure:
 
 ```
 serro-diy/
-  CLAUDE.md                 ← instructions for Claude
-  program_mappings.yaml     ← sources, owner, and charter per program
-  people_mappings.yaml      ← contributors, leads, and Slack IDs per program
-  digests/                  ← daily digest files
+  CLAUDE.md               ← instructions for Claude
+  program_mappings.yaml   ← owner, charter, people, and sources — one file per program
+  digests/                ← daily digest files
   scripts/
     update_digest.sh        ← digest update script
     check_mapping_health.sh ← health check script
@@ -57,7 +56,7 @@ serro-diy/
 
 Why a separate repo:
 - Everyone clones it — teammates, TPMs, managers — without needing access to product code
-- The mapping files become a shared contract that any program owner can update via a PR
+- The mapping file becomes a shared contract that any program owner can update via a PR
 - Claude can commit digest updates back without touching your main repos
 
 ### Connecting teammates to this repo
@@ -82,15 +81,26 @@ The `CLAUDE.md` is what converts a static mapping file into active query behavio
 
 ## B3 — Build program_mappings.yaml
 
-Create `program_mappings.yaml` at your repo root. Each entry declares a program's owner, charter, and every source that contains signals for it.
+Create `program_mappings.yaml` at your repo root. Each entry is the complete config for a program: who owns it, who works on it, and where its signals live.
 
 ```yaml
 # program_mappings.yaml
-# One entry per program. Be explicit — unmapped sources are invisible.
+# One entry per program. One file, one source of truth.
 
 auth-modernization:
   owner: "@sarah"
   charter: "Replace legacy session tokens with JWT across all services. Q3 target."
+  leads:
+    - "@marcus"
+  contributors:
+    - "@alex"
+    - "@jordan"
+  notify:                          # pinged when action items go stale
+    - "@sarah"
+    - "@marcus"
+  slack_ids:                       # needed for DM follow-ups via Slack API
+    "@sarah": "U04A1B2C3D4"        # right-click user in Slack → View profile → Copy ID
+    "@marcus": "U05E6F7G8H9"
   github:
     repos:
       - org/backend
@@ -107,11 +117,21 @@ auth-modernization:
       - "Engineering/Security Reviews"
   meetings:
     series:
-      - "Auth Weekly Sync"         # match against transcript titles
+      - "Auth Weekly Sync"
 
 platform-reliability:
   owner: "@marcus"
   charter: "Reduce p99 latency below 200ms across all API endpoints. Ongoing."
+  leads:
+    - "@jordan"
+  contributors:
+    - "@alex"
+    - "@devon"
+  notify:
+    - "@marcus"
+  slack_ids:
+    "@marcus": "U05E6F7G8H9"
+    "@jordan": "U06I1J2K3L4"
   github:
     repos:
       - org/backend
@@ -133,6 +153,16 @@ platform-reliability:
 mobile-launch:
   owner: "@priya"
   charter: "Ship iOS and Android v1.0 by end of Q4."
+  leads:
+    - "@alex"
+  contributors:
+    - "@devon"
+    - "@casey"
+  notify:
+    - "@priya"
+  slack_ids:
+    "@priya": "U07M8N9O0P1"
+    "@alex": "U08Q2R3S4T5"
   github:
     repos:
       - org/ios
@@ -153,58 +183,7 @@ mobile-launch:
 - Every source that a program's work touches should be listed
 - If a channel is relevant to two programs, list it under both
 - Err on the side of over-mapping — you can narrow later
-- Don't list sources just because they exist — only sources that contain signal for that program
-
----
-
-## B3b — Build people_mappings.yaml
-
-Create `people_mappings.yaml` at your repo root. Each entry declares who has context in a program, who to attribute signals to, and who to notify for action item follow-up.
-
-```yaml
-# people_mappings.yaml
-# Who has context in each program. Update when roles change — not every sprint.
-
-auth-modernization:
-  owner: "@sarah"
-  leads:
-    - "@marcus"                    # tech lead
-  contributors:
-    - "@alex"
-    - "@jordan"
-  notify:                          # pinged when action items go stale
-    - "@sarah"
-    - "@marcus"
-  slack_ids:                       # needed for DM follow-ups via Slack API
-    "@sarah": "U04A1B2C3D4"        # right-click user in Slack → View profile → Copy ID
-    "@marcus": "U05E6F7G8H9"
-
-platform-reliability:
-  owner: "@marcus"
-  leads:
-    - "@jordan"
-  contributors:
-    - "@alex"
-    - "@devon"
-  notify:
-    - "@marcus"
-  slack_ids:
-    "@marcus": "U05E6F7G8H9"
-    "@jordan": "U06I1J2K3L4"
-
-mobile-launch:
-  owner: "@priya"
-  leads:
-    - "@alex"
-  contributors:
-    - "@devon"
-    - "@casey"
-  notify:
-    - "@priya"
-  slack_ids:
-    "@priya": "U07M8N9O0P1"
-    "@alex": "U08Q2R3S4T5"
-```
+- `slack_ids` is optional until you need action item follow-up via DM
 
 ---
 
@@ -220,9 +199,8 @@ any program question and writes daily digests back to digests/.
 
 ## How to answer program questions
 
-1. Read `program_mappings.yaml` to identify the program's owner, charter, and declared sources
-2. Read `people_mappings.yaml` to identify contributors and who to attribute signals to
-3. Read the most recent file in `digests/` for pre-built context on recent activity
+1. Read `program_mappings.yaml` to identify the program's owner, charter, contributors, and declared sources
+2. Read the most recent file in `digests/` for pre-built context on recent activity
 4. If the digest is stale (>24 hours) or the question needs more depth, pull live:
    - GitHub: commits, open PRs, closed PRs in the last 14 days, open issues — declared repos only
    - Slack: messages and threads from the last 14 days — declared channels only

@@ -8,7 +8,7 @@
 
 - [A1 — Connect your tools](#a1--connect-your-tools)
 - [A2 — Create a shared serro-diy repo](#a2--create-a-shared-serro-diy-repo)
-- [A3 — Write program_mappings.yaml, people_mappings.yaml, and CLAUDE.md](#a3--write-program_mappingsyaml-people_mappingsyaml-and-claudemd)
+- [A3 — Write program_mappings.yaml and CLAUDE.md](#a3--write-program_mappingsyaml-and-claudemd)
 - [A4 — Add the daily digest script](#a4--add-the-daily-digest-script)
 - [A5 — Run your first query](#a5--run-your-first-query)
 
@@ -80,8 +80,7 @@ Create the initial structure:
 ```
 serro-diy/
   CLAUDE.md               ← instructions for Claude (you'll write this next)
-  program_mappings.yaml   ← owner, charter, and sources per program
-  people_mappings.yaml    ← contributors, leads, and Slack IDs per program
+  program_mappings.yaml   ← owner, charter, people, and sources — one file per program
   digests/                ← daily digest files written by the update script
 ```
 
@@ -107,9 +106,9 @@ The `CLAUDE.md` is what makes the mapping and digest active instructions rather 
 
 ---
 
-## A3 — Write program_mappings.yaml, people_mappings.yaml, and CLAUDE.md
+## A3 — Write program_mappings.yaml and CLAUDE.md
 
-**`program_mappings.yaml`** — one entry per active program, with owner, charter, and all sources. This is what Claude reads to scope any question and find the right signals.
+**`program_mappings.yaml`** — one entry per program. Owner, charter, contributors, and sources all in one place.
 
 ```yaml
 # program_mappings.yaml
@@ -117,6 +116,16 @@ The `CLAUDE.md` is what makes the mapping and digest active instructions rather 
 auth-modernization:
   owner: "@sarah"
   charter: "Replace legacy session tokens with JWT across all services. Q3 target."
+  leads:
+    - "@marcus"
+  contributors:
+    - "@alex"
+    - "@jordan"
+  notify:
+    - "@sarah"
+  slack_ids:
+    "@sarah": "U04A1B2C3D4"     # right-click user in Slack → View profile → Copy ID
+    "@marcus": "U05E6F7G8H9"
   github:
     repos:
       - org/auth-service
@@ -131,6 +140,12 @@ auth-modernization:
 platform-reliability:
   owner: "@marcus"
   charter: "Reduce p99 latency below 200ms across all API endpoints. Ongoing."
+  contributors:
+    - "@devon"
+  notify:
+    - "@marcus"
+  slack_ids:
+    "@marcus": "U05E6F7G8H9"
   github:
     repos:
       - org/api-gateway
@@ -139,31 +154,6 @@ platform-reliability:
     channels:
       - platform
       - incidents
-```
-
-**`people_mappings.yaml`** — who has context in each program and who to notify for follow-ups.
-
-```yaml
-# people_mappings.yaml
-
-auth-modernization:
-  owner: "@sarah"
-  contributors:
-    - "@alex"
-    - "@jordan"
-  notify:
-    - "@sarah"
-  slack_ids:
-    "@sarah": "U04A1B2C3D4"
-
-platform-reliability:
-  owner: "@marcus"
-  contributors:
-    - "@devon"
-  notify:
-    - "@marcus"
-  slack_ids:
-    "@marcus": "U05E6F7G8H9"
 ```
 
 **`CLAUDE.md`** — tells Claude how to answer questions and where to look. Place it at the root of the `serro-diy` repo.
@@ -176,12 +166,11 @@ any program question and writes daily digests back to digests/.
 
 ## How to answer program questions
 
-1. Read `program_mappings.yaml` to identify the program's owner, charter, and sources
-2. Read `people_mappings.yaml` to identify contributors and who to attribute signals to
-3. Read the most recent file in `digests/` for a pre-built summary of recent activity
-4. If the digest is stale (>24 hours) or the question needs more depth, pull fresh from GitHub, Slack, and Drive
-5. Synthesize across sources — cite the source of every key claim (PR link, Slack thread, doc title)
-6. Flag anything that looks like a blocker or a decision that hasn't been made yet
+1. Read `program_mappings.yaml` to identify the program's owner, charter, contributors, and sources
+2. Read the most recent file in `digests/` for a pre-built summary of recent activity
+3. If the digest is stale (>24 hours) or the question needs more depth, pull fresh from GitHub, Slack, and Drive
+4. Synthesize across sources — cite the source of every key claim (PR link, Slack thread, doc title)
+5. Flag anything that looks like a blocker or a decision that hasn't been made yet
 
 Never answer from memory alone. Always read `digests/` first, then pull live if needed.
 

@@ -49,7 +49,7 @@ Run `/mcp` to verify all servers are connected.
 
 ## C2 — Name your programs and create the shared repo
 
-Same as Family B: create a `serro-diy` repo, add `CLAUDE.md`, `program_mappings.yaml`, and `people_mappings.yaml`.
+Same as Family B: create a `serro-diy` repo, add `CLAUDE.md` and `program_mappings.yaml`.
 
 See [Family B — B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) for the full setup.
 

@@ -38,8 +38,7 @@ Wakes up and repeats
 serro-diy/
   CLAUDE.md               ← how Claude answers program questions
   LOOP.md                 ← ingestion instructions the loop runs each iteration
-  program_mappings.yaml   ← owner, charter, and sources per program
-  people_mappings.yaml    ← contributors, leads, and Slack IDs per program
+  program_mappings.yaml   ← owner, charter, people, and sources per program
   digests/                ← written by the loop, one file per run
 ```
 
@@ -58,12 +57,10 @@ You are the program memory agent for this org. Run these instructions on every i
 
 ---
 
-## Step 1 — Read the mappings
+## Step 1 — Read the mapping
 
 Read `program_mappings.yaml` to get the list of active programs with their owner,
-charter, and declared sources (GitHub repos, Slack channels, Drive folders).
-
-Read `people_mappings.yaml` to identify contributors and notification targets per program.
+charter, contributors, notification targets, and declared sources.
 
 ## Step 2 — Find the last run timestamp
 
