@@ -235,6 +235,10 @@ AI has decoupled team size from execution capacity. A 10-person engineering team
 
 This is the shift from product engineering to program engineering. When a program has no name, no owner, and no shared visibility, it still gets run — by whoever has enough context to hold the picture. That person becomes the accidental program engineer, doing it on top of their actual job, and all the institutional knowledge lives in their head.
 
+And the workstreams themselves are no longer all human. With Anthropic's release of loops in Claude Code, agents stopped being tools you invoke and became standing participants in programs. A loop wakes up on its own schedule, reads program state, pulls signals, writes memory, posts digests, flags blockers — and decides for itself when to run again. Nobody is prompting it.
+
+This is the primary use case of program engineering: programming the governance of human-agent loops. Which decisions a loop makes autonomously, which it escalates, what context it's allowed to act on, who reviews what it wrote while everyone was asleep, and who is accountable when it acts on stale memory. These are program-level decisions, not prompt-level ones. The team that writes its loops' governance explicitly — in the same mapping file that declares its programs' owners and sources — is doing program engineering. The team that doesn't has unaccountable workstreams running unattended.
+
 [Read the full essay - Welcome to Program Engineering](https://serro.ai/blog/welcome-to-program-engineering)
 
 ---
