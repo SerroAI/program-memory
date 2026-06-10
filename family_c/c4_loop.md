@@ -121,6 +121,58 @@ If you'd rather have predictable run times instead of self-pacing:
 
 Replace `1h` with `30m`, `2h`, etc. Fixed intervals ignore the self-pace instruction — remove it from the prompt if you use this form.
 
+## Caveats and workarounds
+
+**The loop stops when your laptop sleeps or closes.**
+This is the most common failure mode. Claude Code needs an active process — close the lid and the loop pauses until you reopen it. Memory goes stale overnight and on weekends.
+
+*Workaround A:* Keep your laptop on and plugged in while the loop runs. Works for daytime coverage during the week. Not reliable for 24/7.
+
+*Workaround B (recommended):* Run the loop on a dedicated always-on machine — a cheap VPS ($5/month), a spare Mac mini, or an old laptop that stays open. SSH in, start the loop, leave it. This is the cleanest path to reliable coverage until cloud workflows ship.
+
+*Workaround C:* Combine with Option C-2. Let the loop cover daytime (when your laptop is on), and a cron on a server covers overnight and weekends. Both write to the same `digests/` folder — they don't conflict since each writes its own timestamped file.
+
+*Coming:* Anthropic is shipping cloud-native workflow support for Claude Code. When it lands, you run the loop in Anthropic's cloud — no machine required, always on. The `/loop` prompt you write today is the same one you'd deploy. Until then, an always-on machine is the closest equivalent.
+
+---
+
+**The loop stops if the Claude Code session crashes or exits.**
+No auto-restart out of the box.
+
+*Workaround:* Wrap the Claude invocation in a restart loop in your shell:
+```bash
+# keep_loop_alive.sh
+while true; do
+  claude  # start session, paste /loop prompt manually
+  echo "Session ended. Restarting in 10 seconds..."
+  sleep 10
+done
+```
+Or use `launchd` (macOS) or `pm2` to manage the process and restart on exit.
+
+---
+
+**Memory has gaps when the loop is offline.**
+If the loop was down for 6 hours, those 6 hours aren't in any digest. The next run will catch up from the last timestamp — but anything that happened during the gap gets summarized in bulk, not incrementally.
+
+*Workaround:* The catch-up run is usually fine. If a specific time window matters, note the gap in the digest manually or run Option C-2 as a fallback for that period.
+
+---
+
+**Network drops disconnect MCP servers mid-run.**
+If Slack or GitHub MCP loses connection during an iteration, that source call fails. Claude will log the error and continue with the other sources — the digest will be incomplete for that program's failed source.
+
+*Workaround:* The loop prompt instructs Claude to note when a source was unreachable rather than silently skipping it. Check the digest for `[source unreachable]` markers and re-run manually if coverage matters.
+
+---
+
+**Self-pacing is not a guarantee.**
+Claude decides the interval based on what it found — but it's a judgment call, not a hard timer. Occasionally it will sleep longer than expected or shorter than needed.
+
+*Workaround:* Use a fixed interval (`/loop 1h`) if you need predictable run times. Self-pacing is best for "keep it roughly current" use cases, not for SLA-bound pipelines.
+
+---
+
 ## Key distinction from Option C-2
 
 | | Option C-2 | Option C-4 |
@@ -167,3 +219,7 @@ Stay with Option C-2 when:
 ## Verdict
 
 The most Claude-native ingestion option. Lowest setup cost of all Family C options. The main constraint is that it requires a persistent process — which matters less as Anthropic ships cloud-native workflow support. **Start with C-2 if you need headless operation today. Start with C-4 if you want the simplest setup and don't mind running Claude Code continuously.**
+
+**Best fit: individual program memory.** Option C-4 is a natural fit when one person (a TPM, EM, or program owner) is running memory for a program or set of programs they own. The loop runs from their machine, stays connected to their MCP credentials, and keeps their program's memory current.
+
+**Organizational program memory — a future direction.** When memory spans a whole org and multiple people are contributing signals, a single loop on one person's machine starts to feel like a bottleneck. One direction worth exploring: each contributor runs their own loop, writing to a per-person `.md` file in the repo, and a reconciliation pass merges those into the shared program digest. Think of it like distributed commits that get resolved into a single canonical view. More on this in a future checkpoint.
