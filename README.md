@@ -60,19 +60,20 @@ This repo documents how to replicate that using only Claude Code and native MCP 
 
 ---
 
-## Three levels of live program memory
+## Four levels of live program memory
 
-There are three levels. Each one is useful on its own. Each one is also the foundation for the next.
+There are four levels. Each one is useful on its own. Each one is also the foundation for the next.
 
 | Level | What you do | What you get | Families |
 |---|---|---|---|
 | **1 — Pull** | Nothing. Claude pulls all sources at query time. | Instant setup. Works until context fills up. | Family A |
 | **2 — Map** | Maintain `program_mappings.yaml` — programs, people, sources in one file. | Scoped queries, contributor attribution, action item follow-up. | Family B |
-| **3 — Loop** | A Claude loop automaintains the digests. Optionally pipe into a graph with CocoIndex. | Always-current memory. Semantic search. Historical reasoning. | Family C (C-4 start) |
+| **3 — Loop** | A Claude loop automaintains the digests. | Always-current memory. No manual maintenance. | Family C (C-4 start) |
+| **4 — Graph** | Pipe loop output into a semantic/graph index. | Semantic search. Entity resolution. Temporal reasoning. | Family C + CocoIndex / FalkorDB / Serro |
 
-Most orgs start at Level 1 and move up when they hit the limit. The mapping file (`program_mappings.yaml`) is the same at every level — you write it once and it carries forward.
+**Start at Level 3.** One `/loop` command, no infrastructure required. Move to Level 4 only after your loop is stable and you're hitting the ceiling of flat digest queries. The mapping file (`program_mappings.yaml`) is the same at every level — you write it once and it carries forward.
 
-**Start at Level 3 if you already know you need it.** One `/loop` command, no other infrastructure required. See [`verdict.md`](verdict.md) for the full rationale and when to use each level.
+See [`verdict.md`](verdict.md) for the full rationale and when to use each level.
 
 Full decision tree: [`decision_chart.md`](decision_chart.md)
 
