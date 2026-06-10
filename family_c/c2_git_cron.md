@@ -9,7 +9,7 @@ A git repo holds all program memory as .md files. A scheduled Claude agent wakes
 ```
 Cron fires (hourly or daily)
         ↓
-Claude wakes up, reads programs_to_sources_mapping.yaml
+Claude wakes up, reads program_mappings.yaml
         ↓
 For each program:
   - GitHub MCP: "list PRs merged in last N hours for these repos"
@@ -162,7 +162,7 @@ For 15-minute intervals: `*/15 * * * *`.
 
 ## Cons
 - Polling - up to 60-minute lag (tunable: run every 15 min if needed)
-- Still uses `programs_to_sources_mapping.yaml` to know what to poll - technically a hybrid of Family B and B
+- Still uses `program_mappings.yaml` to know what to poll - technically a hybrid of Family B and C
 - Slack/Drive polling limited by API search constraints (Slack free tier: 90-day history)
 - Frequent small commits - noisy git history
 

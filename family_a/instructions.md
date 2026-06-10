@@ -64,7 +64,7 @@ All servers should show as connected before proceeding.
 Before writing any files, create a dedicated repo for your program memory. This repo is the single place Claude reads from — and eventually writes back to. Every teammate points their Claude Code at it.
 
 ```bash
-# On GitHub: create a new repo named serro-diy (or org-memory, team-brain, etc.)
+# On GitHub: create a new repo named serro-diy
 # Then clone it locally
 git clone https://github.com/your-org/serro-diy
 cd serro-diy

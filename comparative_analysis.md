@@ -10,7 +10,7 @@
 **Status:** Partial dead end - works for on-demand queries, structurally broken for continuous ingestion
 
 ### What it proposed
-Use Claude Code's built-in MCP integrations (GitHub, Slack, Google Drive) with `/schedule` cron jobs to poll for new signals daily and ingest them into a local `org-memory/` directory structure.
+Use Claude Code's built-in MCP integrations (GitHub, Slack, Google Drive) with `/schedule` cron jobs to poll for new signals daily and ingest them into a local `serro-diy/` directory structure.
 
 ### What didn't work
 
@@ -36,9 +36,9 @@ Use Claude Code's built-in MCP integrations (GitHub, Slack, Google Drive) with `
 **The reality:** The Shortcut requires deliberate triggering. A production voice integration would require a persistent background listener with immediate propagation - ambient capture, not a keyboard shortcut. Whether any current implementation achieves this reliably is unverified.
 
 #### ⚠️ Collective agent governance is convention-based, not enforced
-**The assumption:** CLAUDE.md files referencing org-memory would give all agents shared program context.
+**The assumption:** CLAUDE.md files referencing serro-diy would give all agents shared program context.
 
-**The reality:** This is a social contract. Any Claude session that doesn't load the org-memory CLAUDE.md operates blind. A purpose-built system would make governance architectural - agents connect to a memory store as a hard dependency rather than optionally reading a config file.
+**The reality:** This is a social contract. Any Claude session that doesn't load the serro-diy CLAUDE.md operates blind. A purpose-built system would make governance architectural - agents connect to a memory store as a hard dependency rather than optionally reading a config file.
 
 ### What held up
 

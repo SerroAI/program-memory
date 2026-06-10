@@ -17,7 +17,7 @@ Google Drive push notifications ────────────────
                                                   ↓
                               Writes entry to programs/<name>/signals/YYYY-MM.md
                                                   ↓
-                              git commit + push to shared org-memory repo
+                              git commit + push to shared serro-diy repo
                                                   ↓
                               Any agent: git pull → reads updated memory
 ```

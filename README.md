@@ -1,4 +1,5 @@
 # Build Your Own Serro
+### Definitive guide on building your own program memory layer
 
 > A starter kit for building live shared program memory using Claude Code, MCP integrations, and git - no proprietary infrastructure required.
 
