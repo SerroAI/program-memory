@@ -35,7 +35,9 @@ program-memory/
 
 `CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
-`INGEST_PROMPT.md` is the ingestion instruction file the server reads and passes to `claude` on each webhook event. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-program-memory-repo) — copy that template, then add an event context section at the end:
+**MCP configuration:** Configure GitHub, Slack, and Drive connectors in Claude Code settings → Connectors (or `claude mcp add`) before running the server. Claude Code persists these in your user config; the `claude -p` subprocess inherits them automatically.
+
+`INGEST_PROMPT.md` is the ingestion instruction file the server reads and passes to `claude` on each webhook event. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-program-memory-repo) — which includes the MCP connectivity check — copy that template, then add an event context section at the end:
 
 ```markdown
 ## Event context

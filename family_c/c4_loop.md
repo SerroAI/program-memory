@@ -68,24 +68,37 @@ declared sources (GitHub repos, Slack channels, Drive folders).
 Read the most recent file in `digests/` and note its `last_run` timestamp.
 If no digest exists yet, treat `last_run` as 24 hours ago.
 
+## Step 2b — Check MCP connectivity
+
+Before pulling any signals, verify that each MCP server is reachable. For any server
+that is unavailable, skip all sources it handles for every program and write
+`[MCP unavailable — skipped]` in those sections of the digest. Do not attempt to call
+a disconnected server.
+
 ## Step 3 — Pull signals for each program
 
-For each program in the mapping, pull only what's new since `last_run`:
+For each program in the mapping, pull only what's new since `last_run`. Pass the
+timestamp as a filter directly to each MCP tool call — do not pull full history and
+filter after the fact.
 
-**GitHub** — search declared repos for:
-- Commits merged to main
-- PRs opened, merged, or closed
-- Issues opened or closed
-Include: title, author, PR/issue number, and a one-line summary.
+**GitHub** — for each declared repo:
+- Commits merged to main: pass `since` = `last_run` (ISO 8601, e.g. `2024-01-15T14:30:00Z`)
+- PRs opened, merged, or closed: filter by `updated_at >= last_run` (ISO 8601)
+- Issues opened or closed: pass `since` = `last_run` (ISO 8601)
+Include: title, author, PR/issue number, one-line summary.
 
-**Slack** — search declared channels for:
-- Threads with decisions, blockers, or scope changes
-- Messages that mention the program by name or its key terms
-Do not surface every message — only notable discussions.
+**Slack** — for each declared channel:
+- Pass `oldest` = `last_run` converted to a Unix timestamp (integer seconds since epoch)
+  Example: `2024-01-15T14:30:00Z` → `1705329000`
+- Surface threads with decisions, blockers, or scope changes only — not every message.
 
-**Drive** — search declared folders for:
-- Documents created or modified since last_run
-Note: doc title and what section changed if visible.
+**Drive** — for each declared folder:
+- Query `modifiedTime > '[last_run]'` (RFC 3339 format; ISO 8601 is compatible)
+  Example: `modifiedTime > '2024-01-15T14:30:00Z'`
+- Note: doc title and what changed, if visible.
+
+If a source is unreachable, write `[source unreachable — skipped]` under that section
+rather than leaving it blank. Do not retry — move on and note it.
 
 ## Step 4 — Write the digest
 
@@ -112,23 +125,30 @@ git push
 
 ## Step 6 — Self-pace
 
-Schedule your next run based on what you found:
-- Significant activity across 2+ programs → 30 minutes
-- Activity in 1 program → 1 hour
-- No activity across all programs → 2 hours
+Call ScheduleWakeup with a delay based on what you found:
+- Significant activity across 2+ programs → `delaySeconds: 1800` (30 min)
+- Activity in 1 program → `delaySeconds: 3600` (1 hour)
+- No activity across all programs → `delaySeconds: 7200` (2 hours)
 ```
 
 ---
 
 ## How to run it
 
-**Step 1 — Verify MCPs are connected**
+**Step 1 — Configure and verify connectors**
+
+If you haven't already, connect GitHub, Slack, and Drive in Claude Code settings →
+Connectors (or `claude mcp add`). These credentials persist in your user config and
+are used by all Claude Code sessions, including the loop.
+
+Then verify all three are live:
 
 ```bash
 /mcp
 ```
 
-All three (github, slack, gdrive) should show connected. The loop will skip any source whose MCP is disconnected.
+All three (github, slack, gdrive) should show connected. The loop checks connectivity
+on every iteration and skips any source whose MCP is unavailable rather than failing.
 
 **Step 2 — Start the loop**
 

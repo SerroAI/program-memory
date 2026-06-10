@@ -62,7 +62,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, closed, merged]
+    types: [opened, closed]  # "merged" is not a valid type — merges arrive as closed with merged=true
   repository_dispatch:     # receives forwarded Slack + Drive events from the Worker
     types: [slack_event, drive_event]
   schedule:
@@ -77,6 +77,9 @@ jobs:
       - name: Install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
 
+      # GitHub Actions runners are ephemeral — they can't use your local Claude
+      # connector config. MCP servers must be installed and credentialed explicitly here.
+      # For local use (C-2 or C-4), configure connectors in Claude Code settings instead.
       - name: Install MCP servers
         run: |
           npm install -g @modelcontextprotocol/server-github
@@ -88,6 +91,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         run: |
           PROMPT="$(cat INGEST_PROMPT.md)"
           PAYLOAD='${{ toJson(github.event.client_payload) }}'
