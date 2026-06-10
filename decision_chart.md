@@ -12,12 +12,13 @@ The chart routes you to one of these. Read this before following the decisions.
 |---|---|---|---|
 | **Family A** | Pull everything into context - no config, no mapping, no ingestion. Just ask Claude across all sources at once. | Micro-orgs: ≤5 eng, 1–2 programs, ≤20 sources total | Doesn't scale. Re-test as org grows. |
 | **Family B: Manual Source Mapping** | Declare which sources belong to each program in a yaml file. Claude queries only those sources at query time. | Small–medium orgs willing to maintain the mapping | Silent gaps when mapping is stale. Keyword-only search. Slow on large time windows. |
-| **Family C** | Auto-ingest signals into a versioned memory store as they happen. Claude queries the store, not the live APIs. | Any org needing semantic search, long history, or high query volume | More infrastructure. Three options: C2 (hourly cron), C3 (GitHub Actions), C1 (webhook server). |
+| **Family C** | Auto-ingest signals into a versioned memory store as they happen. Claude queries the store, not the live APIs. | Any org needing semantic search, long history, or high query volume | Requires a persistent process or scheduler. Four options: C-4 (Claude loop, recommended start), C-2 (hourly cron), C-3 (GitHub Actions), C-1 (webhook server). |
 
 **The decision tree below tells you which one fits your org.** If you already know your answer, skip to:
 - [`family_a/instructions.md`](family_a/instructions.md) - full context pull (micro-orgs)
 - [`family_b/instructions.md`](family_b/instructions.md) - source mapping setup
-- [`family_c/c2_git_cron.md`](family_c/c2_git_cron.md) - simplest auto-ingestion
+- [`family_c/c4_loop.md`](family_c/c4_loop.md) - Claude loop, recommended Family C start
+- [`family_c/c2_git_cron.md`](family_c/c2_git_cron.md) - headless cron option
 - [`family_c/c3_github_actions.md`](family_c/c3_github_actions.md) - near-real-time ingestion
 - [`family_b/overview.md`](family_b/overview.md) - Family B limitations in detail
 - [`family_c/overview.md`](family_c/overview.md) - Family C options compared
@@ -103,12 +104,12 @@ flowchart TD
     FAMILYA --> Q_VALIDATE_MEMORY
 
     %% ─── FAMILY B ────────────────────────────────────────────────────
-    FAMILYC_ENTRY{"8. Family C ingestion approach?"}
+    FAMILYC_ENTRY{"8. Family C ingestion approach?\nStart with C-4 unless you have\na specific reason not to."}
 
-    FAMILYC_ENTRY -- "Self-paced, Claude-native\n(simplest setup)" --> C4
-    FAMILYC_ENTRY -- "Headless, fixed interval\n(no active session needed)" --> C2
-    FAMILYC_ENTRY -- "Minutes acceptable" --> Q_C3_INFRA
-    FAMILYC_ENTRY -- "Seconds required" --> Q_C1_INFRA
+    FAMILYC_ENTRY -- "C-4: Self-paced, Claude-native\n(recommended start — one /loop command)" --> C4
+    FAMILYC_ENTRY -- "C-2: Headless, fixed interval\n(no active session needed)" --> C2
+    FAMILYC_ENTRY -- "C-3: Minutes acceptable\n(GitHub Actions + Worker)" --> Q_C3_INFRA
+    FAMILYC_ENTRY -- "C-1: Seconds required\n(always-on server)" --> Q_C1_INFRA
 
     Q_C3_INFRA{"9. Can you write and deploy\na ~10-line Cloudflare Worker?\n(free tier, stateless, no uptime mgmt)"}
     Q_C3_INFRA -- Yes --> C3
