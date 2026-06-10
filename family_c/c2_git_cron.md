@@ -25,10 +25,10 @@ git commit + git push
 Any agent anywhere: git pull → reads updated memory
 ```
 
-## What goes in your program-memory repo
+## What goes in your serro-diy repo
 
 ```
-program-memory/
+serro-diy/
   CLAUDE.md                          ← how Claude answers program questions
   INGEST_PROMPT.md                   ← one-shot ingestion instructions the cron passes to claude
   programs.md                        ← active programs and owners
@@ -36,13 +36,13 @@ program-memory/
   digests/                           ← written by claude on each cron run, one file per run
 ```
 
-`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 `INGEST_PROMPT.md` contains the instructions Claude follows on each cron-triggered run. The cron script passes this file as the prompt when invoking `claude` non-interactively. Copy this into your repo and edit the header to match your org:
 
 ---
 
-**`INGEST_PROMPT.md`** — copy into your `program-memory` repo:
+**`INGEST_PROMPT.md`** — copy into your `serro-diy` repo:
 
 ```markdown
 # Ingestion Instructions
@@ -131,7 +131,7 @@ The cron script invokes Claude with this file:
 ```bash
 #!/bin/bash
 # ingest.sh — run by cron on a schedule
-cd ~/program-memory
+cd ~/serro-diy
 git pull
 
 claude -p "$(cat INGEST_PROMPT.md)"
@@ -142,7 +142,7 @@ claude -p "$(cat INGEST_PROMPT.md)"
 Cron entry for hourly runs:
 
 ```
-0 * * * * /bin/bash ~/program-memory/ingest.sh >> ~/program-memory/logs/cron.log 2>&1
+0 * * * * /bin/bash ~/serro-diy/ingest.sh >> ~/serro-diy/logs/cron.log 2>&1
 ```
 
 For 15-minute intervals: `*/15 * * * *`.

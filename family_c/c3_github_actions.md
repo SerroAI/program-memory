@@ -26,10 +26,10 @@ GitHub Actions serves as the compute layer - no server to operate. GitHub events
                                                     agents: git pull → read updated memory
 ```
 
-## What goes in your program-memory repo
+## What goes in your serro-diy repo
 
 ```
-program-memory/
+serro-diy/
   CLAUDE.md                          ← how Claude answers program questions
   INGEST_PROMPT.md                   ← ingestion instructions the GitHub Action passes to claude
   programs.md                        ← active programs and owners
@@ -40,9 +40,9 @@ program-memory/
       ingest.yml                     ← the Action that runs claude on each event
 ```
 
-`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
-`INGEST_PROMPT.md` is the ingestion instruction file the GitHub Action reads and passes to `claude`. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-program-memory-repo) — copy that template, then add an event context instruction at the end:
+`INGEST_PROMPT.md` is the ingestion instruction file the GitHub Action reads and passes to `claude`. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-serro-diy-repo) — copy that template, then add an event context instruction at the end:
 
 ```markdown
 ## Event context (appended by the Action at runtime)

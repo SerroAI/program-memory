@@ -22,10 +22,10 @@ Google Drive push notifications ────────────────
                               Any agent: git pull → reads updated memory
 ```
 
-## What goes in your program-memory repo
+## What goes in your serro-diy repo
 
 ```
-program-memory/
+serro-diy/
   CLAUDE.md                          ← how Claude answers program questions
   INGEST_PROMPT.md                   ← ingestion instructions the server passes to claude per event
   programs.md                        ← active programs and owners
@@ -33,11 +33,11 @@ program-memory/
   digests/                           ← written by claude on each webhook-triggered run
 ```
 
-`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 **MCP configuration:** Configure GitHub, Slack, and Drive connectors in Claude Code settings → Connectors (or `claude mcp add`) before running the server. Claude Code persists these in your user config; the `claude -p` subprocess inherits them automatically.
 
-`INGEST_PROMPT.md` is the ingestion instruction file the server reads and passes to `claude` on each webhook event. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-program-memory-repo) — which includes the MCP connectivity check — copy that template, then add an event context section at the end:
+`INGEST_PROMPT.md` is the ingestion instruction file the server reads and passes to `claude` on each webhook event. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-serro-diy-repo) — which includes the MCP connectivity check — copy that template, then add an event context section at the end:
 
 ```markdown
 ## Event context
@@ -59,11 +59,11 @@ app.post('/webhook/:source', verifySignature, async (req, res) => {
 
   const source = req.params.source        // "github" | "slack" | "drive"
   const payload = JSON.stringify(req.body)
-  const basePrompt = fs.readFileSync('/path/to/program-memory/INGEST_PROMPT.md', 'utf8')
+  const basePrompt = fs.readFileSync('/path/to/serro-diy/INGEST_PROMPT.md', 'utf8')
   const fullPrompt = `${basePrompt}\n\nEvent source: ${source}\nPayload: ${payload}`
 
   execSync(`claude -p "${fullPrompt.replace(/"/g, '\\"')}"`, {
-    cwd: '/path/to/program-memory',
+    cwd: '/path/to/serro-diy',
     env: { ...process.env }
   })
 })

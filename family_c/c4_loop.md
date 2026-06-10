@@ -32,10 +32,10 @@ Self-pace: found significant activity → sleep 30 min
 Wakes up and repeats
 ```
 
-## What goes in your program-memory repo
+## What goes in your serro-diy repo
 
 ```
-program-memory/
+serro-diy/
   CLAUDE.md                          ← how Claude answers program questions
   LOOP.md                            ← ingestion instructions the loop runs each iteration
   programs.md                        ← active programs and owners
@@ -43,13 +43,13 @@ program-memory/
   digests/                           ← written by the loop, one file per run
 ```
 
-`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 `LOOP.md` is what makes C-4 different. It contains the exact instructions Claude runs on every loop iteration. Copy this into your repo:
 
 ---
 
-**`LOOP.md`** — copy this file into your `program-memory` repo as-is, then edit the notes at the top to match your org:
+**`LOOP.md`** — copy this file into your `serro-diy` repo as-is, then edit the notes at the top to match your org:
 
 ```markdown
 # Loop Instructions
@@ -153,7 +153,7 @@ on every iteration and skips any source whose MCP is unavailable rather than fai
 **Step 2 — Start the loop**
 
 ```bash
-cd ~/program-memory
+cd ~/serro-diy
 claude
 ```
 

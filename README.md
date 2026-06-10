@@ -299,7 +299,7 @@ Applied to program engineering, a loop is what turns passive memory into active 
 - Which programs have gone quiet when they shouldn't have?
 - Has scope drifted outside the declared charter?
 
-The loop reads the program-memory repo, pulls live signals from declared sources, compares current state against the last digest, and posts a summary to Slack — or flags specific items that need attention.
+The loop reads the serro-diy repo, pulls live signals from declared sources, compares current state against the last digest, and posts a summary to Slack — or flags specific items that need attention.
 
 This is the **Serroloop pattern**: memory layer + autonomous loop = proactive program oversight that scales without headcount.
 

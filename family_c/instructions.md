@@ -49,9 +49,9 @@ Run `/mcp` to verify all servers are connected.
 
 ## C2 — Name your programs and create the shared repo
 
-Same as Family B: create a `program-memory` repo, add `programs.md`, `CLAUDE.md`, and `programs_to_sources_mapping.yaml`.
+Same as Family B: create a `serro-diy` repo, add `programs.md`, `CLAUDE.md`, and `programs_to_sources_mapping.yaml`.
 
-See [Family B — B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) for the full setup.
+See [Family B — B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) for the full setup.
 
 ### Connecting teammates to this repo
 
@@ -60,10 +60,10 @@ Every teammate connects once. Two ways:
 **Add it as a project in Claude Code**
 
 ```
-/project:add ~/path/to/program-memory
+/project:add ~/path/to/serro-diy
 ```
 
-For automated ingestion scripts (Option C-2 cron, Option C-3 Actions), `cd` into the `program-memory` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
+For automated ingestion scripts (Option C-2 cron, Option C-3 Actions), `cd` into the `serro-diy` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
 
 ---
 

@@ -7,7 +7,7 @@
 ## Steps
 
 - [B1 — Connect your tools](#b1--connect-your-tools)
-- [B2 — Create a shared program-memory repo](#b2--create-a-shared-program-memory-repo)
+- [B2 — Create a shared serro-diy repo](#b2--create-a-shared-serro-diy-repo)
 - [B3 — Build the mapping file](#b3--build-the-mapping-file)
 - [B4 — Write your CLAUDE.md](#b4--write-your-claudemd)
 - [B5 — Run the context window test](#b5--run-the-context-window-test)
@@ -33,19 +33,19 @@ Run `/mcp` to verify all servers are connected before proceeding.
 
 ---
 
-## B2 — Create a shared program-memory repo
+## B2 — Create a shared serro-diy repo
 
 Same as Family A: create a dedicated repo that the whole team shares. This is where the mapping file lives, where Claude reads instructions, and where digest files get committed.
 
 ```bash
-git clone https://github.com/your-org/program-memory
-cd program-memory
+git clone https://github.com/your-org/serro-diy
+cd serro-diy
 ```
 
 Structure:
 
 ```
-program-memory/
+serro-diy/
   CLAUDE.md                          ← instructions for Claude
   programs.md                        ← program index with owners
   programs_to_sources_mapping.yaml   ← the core config (what makes this Family B)
@@ -91,12 +91,12 @@ Slack: #mobile, #mobile-launch. Repos: org/ios, org/android.
 From inside any other repo (your product code, wherever you normally work):
 
 ```
-/project:add ~/path/to/program-memory
+/project:add ~/path/to/serro-diy
 ```
 
 Claude loads the shared `CLAUDE.md` alongside your current project. Program questions work from anywhere without switching directories.
 
-For scripting and automation (e.g. the digest script), `cd` into the `program-memory` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
+For scripting and automation (e.g. the digest script), `cd` into the `serro-diy` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
 
 The `CLAUDE.md` is what converts a static mapping file into active query behavior. Without it loaded, Claude answers from its own knowledge — stale, uncited, and wrong for anything recent.
 
@@ -175,7 +175,7 @@ mobile-launch:
 
 ## B4 — Write your CLAUDE.md
 
-Place at the root of your `program-memory` repo. This is what every teammate's Claude reads before answering any program question.
+Place at the root of your `serro-diy` repo. This is what every teammate's Claude reads before answering any program question.
 
 ```markdown
 # Program Memory
@@ -294,7 +294,7 @@ Schedule with cron on your server:
 
 ```bash
 # 6am daily
-0 6 * * * cd /path/to/program-memory && ./scripts/update_digest.sh >> logs/digest.log 2>&1
+0 6 * * * cd /path/to/serro-diy && ./scripts/update_digest.sh >> logs/digest.log 2>&1
 ```
 
 Or as a GitHub Actions workflow (no server needed):
@@ -333,7 +333,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       - name: Commit digest
         run: |
-          git config user.name "program-memory-bot"
+          git config user.name "serro-diy-bot"
           git config user.email "bot@your-org.com"
           git add digests/
           git commit -m "digest: $(date +%Y-%m-%d)" || echo "No changes to commit"
@@ -349,7 +349,7 @@ jobs:
 If you don't want a server, run the script from your own machine. It works — but expect it to take several minutes per run. The script has to authenticate, fire MCP calls across all programs sequentially, wait for Claude to synthesize, and commit back. On a 5-program org with 4–5 sources per program, that's easily 10–15 minutes.
 
 ```bash
-cd ~/program-memory
+cd ~/serro-diy
 ./scripts/update_digest.sh
 ```
 

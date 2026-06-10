@@ -7,7 +7,7 @@
 ## Steps
 
 - [A1 — Connect your tools](#a1--connect-your-tools)
-- [A2 — Create a shared program-memory repo](#a2--create-a-shared-program-memory-repo)
+- [A2 — Create a shared serro-diy repo](#a2--create-a-shared-serro-diy-repo)
 - [A3 — Write programs.md and CLAUDE.md](#a3--write-programsmd-and-claudemd)
 - [A4 — Add the daily digest script](#a4--add-the-daily-digest-script)
 - [A5 — Run your first query](#a5--run-your-first-query)
@@ -59,15 +59,15 @@ All servers should show as connected before proceeding.
 
 ---
 
-## A2 — Create a shared program-memory repo
+## A2 — Create a shared serro-diy repo
 
 Before writing any files, create a dedicated repo for your program memory. This repo is the single place Claude reads from — and eventually writes back to. Every teammate points their Claude Code at it.
 
 ```bash
-# On GitHub: create a new repo named program-memory (or org-memory, team-brain, etc.)
+# On GitHub: create a new repo named serro-diy (or org-memory, team-brain, etc.)
 # Then clone it locally
-git clone https://github.com/your-org/program-memory
-cd program-memory
+git clone https://github.com/your-org/serro-diy
+cd serro-diy
 ```
 
 Why a separate repo and not a folder in your main codebase:
@@ -78,7 +78,7 @@ Why a separate repo and not a folder in your main codebase:
 Create the initial structure:
 
 ```
-program-memory/
+serro-diy/
   CLAUDE.md          ← instructions for Claude (you'll write this next)
   programs.md        ← list of active programs
   template.md        ← template for adding a new program
@@ -96,12 +96,12 @@ Every teammate connects once. Two ways to do it:
 From inside any repo (your product code, wherever you normally work):
 
 ```
-/project:add ~/path/to/program-memory
+/project:add ~/path/to/serro-diy
 ```
 
-Claude loads the `program-memory` CLAUDE.md alongside your current project. Program questions work from anywhere without switching directories.
+Claude loads the `serro-diy` CLAUDE.md alongside your current project. Program questions work from anywhere without switching directories.
 
-For scripting and automation (e.g. the digest script), `cd` into the `program-memory` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
+For scripting and automation (e.g. the digest script), `cd` into the `serro-diy` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
 
 The `CLAUDE.md` is what makes the mapping and digest active instructions rather than static text. Without it being loaded, Claude answers from its own knowledge — stale and uncited.
 
@@ -131,7 +131,7 @@ Slack: #platform. Repos: org/api-gateway, org/backend.
 Slack: #[channel]. Repo: [org/repo]. Drive: [folder name if applicable].
 ```
 
-**`CLAUDE.md`** — this is the important one. It tells Claude how to answer questions and where to look. Place it at the root of the `program-memory` repo.
+**`CLAUDE.md`** — this is the important one. It tells Claude how to answer questions and where to look. Place it at the root of the `serro-diy` repo.
 
 ```markdown
 # Program Memory
@@ -171,10 +171,10 @@ The update script (`scripts/update_digest.sh`) runs daily and commits a new file
 the same format and commit directly to this repo.
 ```
 
-Once both files are committed and pushed, every teammate with the `program-memory` repo cloned can point Claude at it:
+Once both files are committed and pushed, every teammate with the `serro-diy` repo cloned can point Claude at it:
 
 ```
-/project:add ~/path/to/program-memory
+/project:add ~/path/to/serro-diy
 ```
 
 Or set it as the project directory when starting Claude Code.
@@ -185,7 +185,7 @@ Or set it as the project directory when starting Claude Code.
 
 This script runs once a day (or on a cron), pulls yesterday's activity across GitHub, Slack, and meetings, maps it to your programs, and commits a digest file back to the repo. Claude reads this file before answering questions — so queries are fast and don't need to re-pull everything from scratch.
 
-Create `scripts/update_digest.sh` in your `program-memory` repo:
+Create `scripts/update_digest.sh` in your `serro-diy` repo:
 
 ```bash
 #!/usr/bin/env bash
@@ -239,7 +239,7 @@ Schedule it with cron (runs at 6am daily):
 ```bash
 crontab -e
 # Add:
-0 6 * * * cd /path/to/program-memory && ./scripts/update_digest.sh >> logs/digest.log 2>&1
+0 6 * * * cd /path/to/serro-diy && ./scripts/update_digest.sh >> logs/digest.log 2>&1
 ```
 
 > **When Anthropic ships Workflows**: replace the cron with a cloud workflow that runs every few hours instead of once a day. The script logic stays the same — the trigger becomes event-driven rather than scheduled.
