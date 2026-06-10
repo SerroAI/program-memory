@@ -29,14 +29,14 @@ Any agent anywhere: git pull → reads updated memory
 
 ```
 serro-diy/
-  CLAUDE.md                          ← how Claude answers program questions
-  INGEST_PROMPT.md                   ← one-shot ingestion instructions the cron passes to claude
-  programs.md                        ← active programs and owners
-  programs_to_sources_mapping.yaml   ← which sources belong to each program
-  digests/                           ← written by claude on each cron run, one file per run
+  CLAUDE.md               ← how Claude answers program questions
+  INGEST_PROMPT.md        ← one-shot ingestion instructions the cron passes to claude
+  program_mappings.yaml   ← owner, charter, and sources per program
+  people_mappings.yaml    ← contributors, leads, and Slack IDs per program
+  digests/                ← written by claude on each cron run, one file per run
 ```
 
-`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md`, `program_mappings.yaml`, and `people_mappings.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 `INGEST_PROMPT.md` contains the instructions Claude follows on each cron-triggered run. The cron script passes this file as the prompt when invoking `claude` non-interactively. Copy this into your repo and edit the header to match your org:
 
@@ -51,10 +51,12 @@ You are the program memory agent for this org. Execute these steps once and exit
 
 ---
 
-## Step 1 — Read the source mapping
+## Step 1 — Read the mappings
 
-Read `programs_to_sources_mapping.yaml` to get the list of active programs and their
-declared sources (GitHub repos, Slack channels, Drive folders).
+Read `program_mappings.yaml` to get the list of active programs with their owner,
+charter, and declared sources (GitHub repos, Slack channels, Drive folders).
+
+Read `people_mappings.yaml` to identify contributors and notification targets per program.
 
 ## Step 2 — Find the last run timestamp
 

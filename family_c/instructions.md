@@ -49,7 +49,7 @@ Run `/mcp` to verify all servers are connected.
 
 ## C2 — Name your programs and create the shared repo
 
-Same as Family B: create a `serro-diy` repo, add `programs.md`, `CLAUDE.md`, and `programs_to_sources_mapping.yaml`.
+Same as Family B: create a `serro-diy` repo, add `CLAUDE.md`, `program_mappings.yaml`, and `people_mappings.yaml`.
 
 See [Family B — B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) for the full setup.
 
@@ -69,7 +69,7 @@ For automated ingestion scripts (Option C-2 cron, Option C-3 Actions), `cd` into
 
 ## C3 — Build the mapping file
 
-Same as Family B. Create `programs_to_sources_mapping.yaml` declaring which sources belong to each program.
+Same as Family B. Create `program_mappings.yaml` declaring which sources belong to each program.
 
 See [Family B — B3](../family_b/instructions.md#b3--build-the-mapping-file) for the format and rules.
 

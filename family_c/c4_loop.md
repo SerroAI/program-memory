@@ -13,7 +13,7 @@ No bash wrapper. No cron. No external scheduler. The loop primitive is the inges
 ```
 claude /loop "update program memory"
         ↓
-Claude wakes up, reads programs_to_sources_mapping.yaml
+Claude wakes up, reads program_mappings.yaml
         ↓
 For each program:
   - GitHub MCP: commits, PRs, issues since last run
@@ -36,14 +36,14 @@ Wakes up and repeats
 
 ```
 serro-diy/
-  CLAUDE.md                          ← how Claude answers program questions
-  LOOP.md                            ← ingestion instructions the loop runs each iteration
-  programs.md                        ← active programs and owners
-  programs_to_sources_mapping.yaml   ← which sources belong to each program
-  digests/                           ← written by the loop, one file per run
+  CLAUDE.md               ← how Claude answers program questions
+  LOOP.md                 ← ingestion instructions the loop runs each iteration
+  program_mappings.yaml   ← owner, charter, and sources per program
+  people_mappings.yaml    ← contributors, leads, and Slack IDs per program
+  digests/                ← written by the loop, one file per run
 ```
 
-`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and `program_mappings.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 `LOOP.md` is what makes C-4 different. It contains the exact instructions Claude runs on every loop iteration. Copy this into your repo:
 
@@ -58,10 +58,12 @@ You are the program memory agent for this org. Run these instructions on every i
 
 ---
 
-## Step 1 — Read the source mapping
+## Step 1 — Read the mappings
 
-Read `programs_to_sources_mapping.yaml` to get the list of active programs and their
-declared sources (GitHub repos, Slack channels, Drive folders).
+Read `program_mappings.yaml` to get the list of active programs with their owner,
+charter, and declared sources (GitHub repos, Slack channels, Drive folders).
+
+Read `people_mappings.yaml` to identify contributors and notification targets per program.
 
 ## Step 2 — Find the last run timestamp
 

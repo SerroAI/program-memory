@@ -29,7 +29,7 @@ For orgs that have outgrown full context pull and are willing to maintain a mapp
 |---|---|---|
 | B1 | Connect your tools | Install MCP servers for all sources your programs touch |
 | B2 | Name your programs | Define each program with a name, owner, and one-line charter |
-| B3 | Build the mapping file | Create `programs_to_sources_mapping.yaml` — for each program, declare its GitHub repos, Slack channels, Drive folders, and meeting series |
+| B3 | Build the mapping file | Create `program_mappings.yaml` — for each program, declare its GitHub repos, Slack channels, Drive folders, and meeting series |
 | B4 | Write your CLAUDE.md | Tells Claude to read the mapping file and query only the declared sources for the active program |
 | B5 | Run the context window test | Fire one real cross-source query per program. Measure tokens, latency, and answer quality against a human ground truth |
 | B6 | Set up the mapping health check | A script or scheduled agent that verifies all declared sources still exist and alerts if any are missing ⚙️ |
@@ -52,7 +52,7 @@ Family C has three sub-options based on latency tolerance. Steps C1–C5 are sha
 |---|---|---|
 | C1 | Connect your tools | Install MCP servers for all sources — same as Family B |
 | C2 | Name your programs | Define programs with names, owners, and charters — same as Family B |
-| C3 | Build the mapping file | Create `programs_to_sources_mapping.yaml` — same as Family B |
+| C3 | Build the mapping file | Create `program_mappings.yaml` — same as Family B |
 | C4 | Choose your memory store | Where ingested signals will live and be queried from ⚙️ |
 | C5 | Choose your ingestion method | Pick C2 (hourly cron), C3 (GitHub Actions + Worker), or C1 (webhook server) based on latency needs ⚙️ |
 

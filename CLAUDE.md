@@ -22,7 +22,7 @@ A research and implementation guide for building an open-source Serro replica us
 - `family_b/instructions.md` - source mapping step-by-step
 - `family_c/overview.md` - auto-ingestion approach (three options)
 - `family_c/c2_git_cron.md` - recommended starting point for Family C
-- `templates/programs_to_sources_mapping.yaml` - the core config file all approaches depend on
+- `templates/program_mappings.yaml` - the core config file all approaches depend on
 
 ## What this is NOT
 - A finished product

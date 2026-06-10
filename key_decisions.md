@@ -36,7 +36,7 @@ For the full interactive decision tree, see [`../decision_chart.md`](../decision
 ---
 
 ### 3. Team discipline for mapping maintenance?
-**The decision:** Is your team willing and able to update `programs_to_sources_mapping.yaml` when channels are renamed, repos archived, or meetings change - roughly once a quarter?
+**The decision:** Is your team willing and able to update `program_mappings.yaml` when channels are renamed, repos archived, or meetings change - roughly once a quarter?
 
 **Why it matters:** Family B's failure mode is silent. When a source is missing from the mapping, the system returns a complete-looking answer that is invisibly incomplete. No warning, no error. A renamed Slack channel that nobody updates in the mapping means every query silently excludes all messages in that channel - indefinitely. Teams that haven't experienced this kind of silent data gap tend to underestimate how damaging it is in practice.
 

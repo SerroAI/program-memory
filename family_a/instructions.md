@@ -8,7 +8,7 @@
 
 - [A1 — Connect your tools](#a1--connect-your-tools)
 - [A2 — Create a shared serro-diy repo](#a2--create-a-shared-serro-diy-repo)
-- [A3 — Write programs.md and CLAUDE.md](#a3--write-programsmd-and-claudemd)
+- [A3 — Write program_mappings.yaml, people_mappings.yaml, and CLAUDE.md](#a3--write-program_mappingsyaml-people_mappingsyaml-and-claudemd)
 - [A4 — Add the daily digest script](#a4--add-the-daily-digest-script)
 - [A5 — Run your first query](#a5--run-your-first-query)
 
@@ -79,10 +79,10 @@ Create the initial structure:
 
 ```
 serro-diy/
-  CLAUDE.md          ← instructions for Claude (you'll write this next)
-  programs.md        ← list of active programs
-  template.md        ← template for adding a new program
-  digests/           ← daily digest files written by the update script
+  CLAUDE.md               ← instructions for Claude (you'll write this next)
+  program_mappings.yaml   ← owner, charter, and sources per program
+  people_mappings.yaml    ← contributors, leads, and Slack IDs per program
+  digests/                ← daily digest files written by the update script
 ```
 
 ### Connecting teammates to this repo
@@ -107,31 +107,66 @@ The `CLAUDE.md` is what makes the mapping and digest active instructions rather 
 
 ---
 
-## A3 — Write programs.md and CLAUDE.md
+## A3 — Write program_mappings.yaml, people_mappings.yaml, and CLAUDE.md
 
-**`programs.md`** — one entry per active program. Keep it short and current. This is what Claude reads to scope any question.
+**`program_mappings.yaml`** — one entry per active program, with owner, charter, and all sources. This is what Claude reads to scope any question and find the right signals.
 
-```markdown
-# Active Programs
+```yaml
+# program_mappings.yaml
 
-## Auth Modernization
-Replace legacy session tokens with JWT. Owner: @sarah. Q3 target.
-Slack: #auth-migration. Repo: org/auth-service.
+auth-modernization:
+  owner: "@sarah"
+  charter: "Replace legacy session tokens with JWT across all services. Q3 target."
+  github:
+    repos:
+      - org/auth-service
+      - org/backend
+  slack:
+    channels:
+      - auth-migration
+  drive:
+    folders:
+      - "Engineering/Auth RFCs"
 
-## Platform Reliability
-Reduce p99 latency below 200ms across all API endpoints. Owner: @marcus.
-Slack: #platform. Repos: org/api-gateway, org/backend.
+platform-reliability:
+  owner: "@marcus"
+  charter: "Reduce p99 latency below 200ms across all API endpoints. Ongoing."
+  github:
+    repos:
+      - org/api-gateway
+      - org/backend
+  slack:
+    channels:
+      - platform
+      - incidents
 ```
 
-**`template.md`** — copy this when adding a new program so the format stays consistent:
+**`people_mappings.yaml`** — who has context in each program and who to notify for follow-ups.
 
-```markdown
-## [Program Name]
-[One sentence: what it is and why it matters.] Owner: @[handle]. [Quarter] target.
-Slack: #[channel]. Repo: [org/repo]. Drive: [folder name if applicable].
+```yaml
+# people_mappings.yaml
+
+auth-modernization:
+  owner: "@sarah"
+  contributors:
+    - "@alex"
+    - "@jordan"
+  notify:
+    - "@sarah"
+  slack_ids:
+    "@sarah": "U04A1B2C3D4"
+
+platform-reliability:
+  owner: "@marcus"
+  contributors:
+    - "@devon"
+  notify:
+    - "@marcus"
+  slack_ids:
+    "@marcus": "U05E6F7G8H9"
 ```
 
-**`CLAUDE.md`** — this is the important one. It tells Claude how to answer questions and where to look. Place it at the root of the `serro-diy` repo.
+**`CLAUDE.md`** — tells Claude how to answer questions and where to look. Place it at the root of the `serro-diy` repo.
 
 ```markdown
 # Program Memory
@@ -139,28 +174,14 @@ Slack: #[channel]. Repo: [org/repo]. Drive: [folder name if applicable].
 This repo is the shared memory for [Your Org]. Claude reads it before answering
 any program question and writes daily digests back to digests/.
 
-## Sources
-
-When answering program questions, pull from all of these:
-
-**GitHub**
-- Repos: org/backend, org/frontend, org/infra
-- Look at: recent commits, open PRs, closed PRs in the last 14 days, open issues
-
-**Slack**
-- Channels: #eng, #platform, #auth-migration, #incidents
-- History: last 14 days unless the question asks for more
-
-**Google Drive**
-- Folders: Engineering/RFCs, Program Docs, Meeting Notes
-
 ## How to answer program questions
 
-1. Read `programs.md` to identify which program is being asked about and its scope
-2. Read the most recent file in `digests/` for a pre-built summary of recent activity
-3. If the digest is stale (>24 hours) or the question needs more depth, pull fresh from GitHub, Slack, and Drive
-4. Synthesize across sources — cite the source of every key claim (PR link, Slack thread, doc title)
-5. Flag anything that looks like a blocker or a decision that hasn't been made yet
+1. Read `program_mappings.yaml` to identify the program's owner, charter, and sources
+2. Read `people_mappings.yaml` to identify contributors and who to attribute signals to
+3. Read the most recent file in `digests/` for a pre-built summary of recent activity
+4. If the digest is stale (>24 hours) or the question needs more depth, pull fresh from GitHub, Slack, and Drive
+5. Synthesize across sources — cite the source of every key claim (PR link, Slack thread, doc title)
+6. Flag anything that looks like a blocker or a decision that hasn't been made yet
 
 Never answer from memory alone. Always read `digests/` first, then pull live if needed.
 
@@ -203,7 +224,7 @@ echo "" >> "$OUTPUT"
 claude --print "
 You are updating the program memory for this org. Today is ${DATE}.
 
-Read programs.md to get the list of active programs and their source mappings.
+Read program_mappings.yaml to get the list of active programs, their owners, charters, and source mappings.
 
 For each program:
 1. Search GitHub for commits, merged PRs, and opened issues in the last 24 hours

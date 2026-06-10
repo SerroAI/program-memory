@@ -6,10 +6,10 @@
 
 ## The Idea
 
-Each program has a declared set of sources in `programs_to_sources_mapping.yaml`. When a question is asked about a program, Claude reads the mapping and fires targeted MCP calls against only the listed sources - no blind org-wide scanning.
+Each program has a declared set of sources in `program_mappings.yaml`. When a question is asked about a program, Claude reads the mapping and fires targeted MCP calls against only the listed sources - no blind org-wide scanning.
 
 ```yaml
-# programs_to_sources_mapping.yaml
+# program_mappings.yaml
 enterprise-readiness:
   slack_channels:
     - "#enterprise-readiness"

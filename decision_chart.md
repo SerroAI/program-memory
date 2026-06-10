@@ -62,7 +62,7 @@ flowchart TD
     HORIZON_SEMANTIC --> FAMILYC_ENTRY
 
     %% ─── TEAM DISCIPLINE ─────────────────────────────────────────────
-    Q_DISCIPLINE{"4. Team discipline for\nmapping maintenance?\nWill the team update\nprograms_to_sources_mapping.yaml\nwhen channels/repos change?"}
+    Q_DISCIPLINE{"4. Team discipline for\nmapping maintenance?\nWill the team update\nprogram_mappings.yaml\nwhen channels/repos change?"}
 
     Q_DISCIPLINE -- "Yes, owned explicitly" --> Q_SILENT_GAPS
     Q_DISCIPLINE -- "No / unreliable" --> DISCIPLINE_TRADEOFF

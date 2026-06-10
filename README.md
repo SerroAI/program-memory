@@ -110,7 +110,7 @@ This is an honest comparison. The open-source version covers the architecture - 
 | Capability | Open-source (this repo) | Serro |
 |---|---|---|
 | Live memory ingestion | ✅ Hourly–seconds depending on Family C option | ✅ Continuous, event-driven |
-| Program-indexed memory | ✅ Via `programs_to_sources_mapping.yaml` | ✅ Auto-classified, org-wide |
+| Program-indexed memory | ✅ Via `program_mappings.yaml` | ✅ Auto-classified, org-wide |
 | Keyword search across sources | ✅ Via MCP (GitHub, Slack, Drive) | ✅ |
 | Semantic / embedding search | ⚠️ Requires self-hosted vector store (Family C) | ✅ Built-in |
 | Temporal code intelligence | ⚠️ Keyword search only - conceptual drift not detectable | ✅ Symbol-level history |
@@ -168,7 +168,7 @@ Pick your family from the decision chart. Each folder has an `instructions.md`.
 ```
 templates/
 ```
-`programs_to_sources_mapping.yaml`, `charter.md`, and `CLAUDE_template.md` are ready to fill in.
+`program_mappings.yaml`, `charter.md`, and `CLAUDE_template.md` are ready to fill in.
 
 ---
 
@@ -201,7 +201,7 @@ templates/
 │   └── instructions.md             ← step-by-step setup
 │
 ├── templates/
-│   ├── programs_to_sources_mapping.yaml
+│   ├── program_mappings.yaml
 │   ├── charter.md
 │   └── CLAUDE_template.md
 │

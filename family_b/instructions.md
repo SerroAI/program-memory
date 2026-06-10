@@ -46,41 +46,19 @@ Structure:
 
 ```
 serro-diy/
-  CLAUDE.md                          ← instructions for Claude
-  programs.md                        ← program index with owners
-  programs_to_sources_mapping.yaml   ← the core config (what makes this Family B)
-  template.md                        ← template for new programs
-  digests/                           ← daily digest files
+  CLAUDE.md                 ← instructions for Claude
+  program_mappings.yaml     ← sources, owner, and charter per program
+  people_mappings.yaml      ← contributors, leads, and Slack IDs per program
+  digests/                  ← daily digest files
   scripts/
-    update_digest.sh                 ← digest update script
-    check_mapping_health.sh          ← health check script
+    update_digest.sh        ← digest update script
+    check_mapping_health.sh ← health check script
 ```
 
 Why a separate repo:
 - Everyone clones it — teammates, TPMs, managers — without needing access to product code
-- The mapping file becomes a shared contract that any program owner can update via a PR
+- The mapping files become a shared contract that any program owner can update via a PR
 - Claude can commit digest updates back without touching your main repos
-
-**`programs.md`** — one entry per active program. Use lowercase-hyphenated names; these become the keys in your mapping file.
-
-```markdown
-# Active Programs
-
-## auth-modernization
-Owner: @sarah
-Charter: Replace legacy session tokens with JWT across all services. Q3 target.
-Slack: #auth-migration, #backend-eng. Repos: org/backend, org/auth-service.
-
-## platform-reliability
-Owner: @marcus
-Charter: Reduce p99 latency below 200ms across all API endpoints.
-Slack: #platform, #incidents. Repos: org/backend, org/infra, org/api-gateway.
-
-## mobile-launch
-Owner: @priya
-Charter: Ship iOS and Android v1.0 by end of Q4.
-Slack: #mobile, #mobile-launch. Repos: org/ios, org/android.
-```
 
 ### Connecting teammates to this repo
 
@@ -102,15 +80,17 @@ The `CLAUDE.md` is what converts a static mapping file into active query behavio
 
 ---
 
-## B3 — Build the mapping file
+## B3 — Build program_mappings.yaml
 
-Create `programs_to_sources_mapping.yaml` at your repo root. For each program, declare every source that contains signals relevant to it.
+Create `program_mappings.yaml` at your repo root. Each entry declares a program's owner, charter, and every source that contains signals for it.
 
 ```yaml
-# programs_to_sources_mapping.yaml
+# program_mappings.yaml
 # One entry per program. Be explicit — unmapped sources are invisible.
 
 auth-modernization:
+  owner: "@sarah"
+  charter: "Replace legacy session tokens with JWT across all services. Q3 target."
   github:
     repos:
       - org/backend
@@ -130,6 +110,8 @@ auth-modernization:
       - "Auth Weekly Sync"         # match against transcript titles
 
 platform-reliability:
+  owner: "@marcus"
+  charter: "Reduce p99 latency below 200ms across all API endpoints. Ongoing."
   github:
     repos:
       - org/backend
@@ -149,6 +131,8 @@ platform-reliability:
       - "Platform Reliability Review"
 
 mobile-launch:
+  owner: "@priya"
+  charter: "Ship iOS and Android v1.0 by end of Q4."
   github:
     repos:
       - org/ios
@@ -173,6 +157,57 @@ mobile-launch:
 
 ---
 
+## B3b — Build people_mappings.yaml
+
+Create `people_mappings.yaml` at your repo root. Each entry declares who has context in a program, who to attribute signals to, and who to notify for action item follow-up.
+
+```yaml
+# people_mappings.yaml
+# Who has context in each program. Update when roles change — not every sprint.
+
+auth-modernization:
+  owner: "@sarah"
+  leads:
+    - "@marcus"                    # tech lead
+  contributors:
+    - "@alex"
+    - "@jordan"
+  notify:                          # pinged when action items go stale
+    - "@sarah"
+    - "@marcus"
+  slack_ids:                       # needed for DM follow-ups via Slack API
+    "@sarah": "U04A1B2C3D4"        # right-click user in Slack → View profile → Copy ID
+    "@marcus": "U05E6F7G8H9"
+
+platform-reliability:
+  owner: "@marcus"
+  leads:
+    - "@jordan"
+  contributors:
+    - "@alex"
+    - "@devon"
+  notify:
+    - "@marcus"
+  slack_ids:
+    "@marcus": "U05E6F7G8H9"
+    "@jordan": "U06I1J2K3L4"
+
+mobile-launch:
+  owner: "@priya"
+  leads:
+    - "@alex"
+  contributors:
+    - "@devon"
+    - "@casey"
+  notify:
+    - "@priya"
+  slack_ids:
+    "@priya": "U07M8N9O0P1"
+    "@alex": "U08Q2R3S4T5"
+```
+
+---
+
 ## B4 — Write your CLAUDE.md
 
 Place at the root of your `serro-diy` repo. This is what every teammate's Claude reads before answering any program question.
@@ -185,8 +220,8 @@ any program question and writes daily digests back to digests/.
 
 ## How to answer program questions
 
-1. Read `programs.md` to identify the program and its owner
-2. Read `programs_to_sources_mapping.yaml` to get the declared sources for that program
+1. Read `program_mappings.yaml` to identify the program's owner, charter, and declared sources
+2. Read `people_mappings.yaml` to identify contributors and who to attribute signals to
 3. Read the most recent file in `digests/` for pre-built context on recent activity
 4. If the digest is stale (>24 hours) or the question needs more depth, pull live:
    - GitHub: commits, open PRs, closed PRs in the last 14 days, open issues — declared repos only
@@ -201,13 +236,13 @@ any program question and writes daily digests back to digests/.
 
 ## Source mapping
 
-All sources are declared in `programs_to_sources_mapping.yaml`. If a channel, repo, or
+All sources are declared in `program_mappings.yaml`. If a channel, repo, or
 folder isn't listed there for a program, it is invisible to queries for that program.
 If something is missing, open a PR to add it.
 
 ## Programs
 
-See `programs.md` for program names, owners, and charters.
+Program names, owners, and charters are declared in `program_mappings.yaml`.
 ```
 
 ---
@@ -265,7 +300,7 @@ echo "" >> "$OUTPUT"
 claude --print "
 You are updating the program memory for this org. Today is ${DATE}.
 
-Read programs.md and programs_to_sources_mapping.yaml.
+Read program_mappings.yaml (which includes owner, charter, and sources for each program).
 
 For each program in the mapping:
 1. Search GitHub for commits, merged PRs, and opened issues in the last 24 hours
@@ -363,10 +398,10 @@ If your team has dedicated TPMs, or if you're a manager directly responsible for
 
 **What this looks like in practice:**
 
-When you spin up a new program, or when a channel gets renamed, or when a new repo is created — you open a PR to `programs_to_sources_mapping.yaml` directly in GitHub. The PR is the audit trail. Reviews are cheap — it's a few lines of yaml. Merge it, and Claude's next query picks up the new source automatically.
+When you spin up a new program, or when a channel gets renamed, or when a new repo is created — you open a PR to `program_mappings.yaml` directly in GitHub. The PR is the audit trail. Reviews are cheap — it's a few lines of yaml. Merge it, and Claude's next query picks up the new source automatically.
 
 ```yaml
-# programs_to_sources_mapping.yaml
+# program_mappings.yaml
 # Owner: @sarah (TPM) — open a PR to add or change sources
 
 mobile-launch:
@@ -401,10 +436,10 @@ Family B fails silently when the mapping is stale. A health check catches the mo
 ```bash
 #!/bin/bash
 # check_mapping_health.sh
-# Reads programs_to_sources_mapping.yaml and verifies each declared source exists
+# Reads program_mappings.yaml and verifies each declared source exists
 # Requires: yq (yaml parser), GitHub CLI (gh), SLACK_BOT_TOKEN env var
 
-MAPPING="programs_to_sources_mapping.yaml"
+MAPPING="program_mappings.yaml"
 ERRORS=0
 
 # Check GitHub repos
@@ -431,7 +466,7 @@ else
 fi
 
 if [ $ERRORS -gt 0 ]; then
-  echo "$ERRORS source(s) missing. Update programs_to_sources_mapping.yaml."
+  echo "$ERRORS source(s) missing. Update program_mappings.yaml."
   exit 1
 fi
 
@@ -469,7 +504,7 @@ jobs:
 
 Ask Claude once a week:
 ```
-Read programs_to_sources_mapping.yaml. For each declared GitHub repo, Slack channel,
+Read program_mappings.yaml. For each declared GitHub repo, Slack channel,
 and Drive folder, verify it still exists and is accessible. Report any that are missing
 or inaccessible. Post the result to #program-ops.
 ```
