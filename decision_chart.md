@@ -106,9 +106,10 @@ flowchart TD
     FAMILYA --> Q_VALIDATE_MEMORY
 
     %% ─── FAMILY B ────────────────────────────────────────────────────
-    FAMILYC_ENTRY{"8. Family C latency\nrequirement?"}
+    FAMILYC_ENTRY{"8. Family C ingestion approach?"}
 
-    FAMILYC_ENTRY -- "Hours acceptable\n(simplest start)" --> C2
+    FAMILYC_ENTRY -- "Self-paced, Claude-native\n(simplest setup)" --> C4
+    FAMILYC_ENTRY -- "Headless, fixed interval\n(no active session needed)" --> C2
     FAMILYC_ENTRY -- "Minutes acceptable" --> Q_C3_INFRA
     FAMILYC_ENTRY -- "Seconds required" --> Q_C1_INFRA
 
@@ -126,12 +127,15 @@ flowchart TD
     B1_TRADEOFF["⚠️ Tradeoff: C3 is near-real-time without a server\n\nC3 achieves 1–2 min latency.\nFor most program management use cases,\n1–2 min vs. seconds is an acceptable gap.\nOnly genuine real-time use cases (live incident\nresponse, immediate meeting capture) need C1.\n\nVerdict: Use C3. Revisit C1 only if 1–2 min\nlag creates a real operational problem.\nSee: family_c/c3_github_actions.md"]
     B1_TRADEOFF --> C3
 
-    C2(["✅ C2: Shared Git Repo + Scheduled Cron\n• Hourly polling via MCP\n• Zero new infrastructure\n• Git = versioned memory history for free\n• Uses programs_to_sources_mapping.yaml\n• Start here - upgrade to C3 if lag matters\nSee: family_c/c2_git_cron/"])
+    C4(["✅ Option C-4: Claude Code Loop\n• Claude IS the scheduler — self-pacing based on activity\n• One /loop command, no cron, no bash scripts\n• Persistent context across iterations\n• Requires a running Claude Code process\n• Natural upgrade path to Anthropic cloud workflows\nSee: family_c/c4_loop.md"])
+
+    C2(["✅ Option C-2: Shared Git Repo + Scheduled Cron\n• Hourly polling via MCP\n• Zero new infrastructure — fully headless\n• Git = versioned memory history for free\n• Predictable run times, auditable\n• Upgrade to C3 if lag matters\nSee: family_c/c2_git_cron/"])
 
     C3(["✅ C3: GitHub Actions + Cloudflare Worker\n• 1–2 min latency on GitHub events\n• ~10-line Worker forwards Slack/Drive events\n• GitHub Actions runner = free tier compute\n• Cron fallback catches missed events\nSee: family_c/c3_github_actions/"])
 
     C1(["✅ C1: Webhook Server\n• Seconds latency\n• You operate a server 24/7\n• Highest fidelity to production TPM arch\n• Drive push channels expire every 24h\nSee: family_c/c1_webhook_server/"])
 
+    C4 --> Q_VALIDATE_MEMORY
     C2 --> Q_VALIDATE_MEMORY
     C3 --> Q_VALIDATE_MEMORY
     C1 --> Q_VALIDATE_MEMORY
@@ -217,6 +221,7 @@ flowchart TD
     style FAMILYB fill:#d4edda,stroke:#28a745,color:#000
     style FAMILYA fill:#d4edda,stroke:#28a745,color:#000
     style C1 fill:#d4edda,stroke:#28a745,color:#000
+    style C4 fill:#d4edda,stroke:#28a745,color:#000
     style C2 fill:#d4edda,stroke:#28a745,color:#000
     style C3 fill:#d4edda,stroke:#28a745,color:#000
     style PROACTIVE fill:#d4edda,stroke:#28a745,color:#000

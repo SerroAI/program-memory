@@ -10,11 +10,12 @@ Family C has three sub-options. Pick based on how much latency you can tolerate 
 
 | Option | Latency | Infrastructure | Start here if |
 |---|---|---|---|
-| [Option C-2 — Git + Cron](c2_git_cron.md) | Hourly | Zero beyond a shared git repo | You want the simplest possible start |
+| [Option C-4 — Claude Code Loop](c4_loop.md) | Self-paced (15 min–2 hr) | Persistent Claude Code process | You want the simplest setup — one command, no cron, fully native |
+| [Option C-2 — Git + Cron](c2_git_cron.md) | Hourly | Zero beyond a shared git repo | You need fully headless operation with no active session |
 | [Option C-3 — GitHub Actions + Cloudflare Worker](c3_github_actions.md) | 1–2 min | ~10-line Cloudflare Worker (free tier) | You need near-real-time without a server |
 | [Option C-1 — Webhook Server](c1_webhook_server.md) | Seconds | Always-on server you operate | Seconds matter — live incident response, immediate meeting capture |
 
-**If you're not sure, start with Option C-2.** It's the lowest-complexity path and you can upgrade to Option C-3 or Option C-1 later without changing your memory store or CLAUDE.md.
+**If you're not sure, start with Option C-4** (one `/loop` command, no infrastructure) or **Option C-2** if you need it to run headlessly. You can upgrade to Option C-3 or Option C-1 later without changing your memory store or CLAUDE.md.
 
 ---
 
@@ -137,7 +138,8 @@ Your ingestion method determines how signals get from live sources into your mem
 
 | Method | How it triggers | Best for |
 |---|---|---|
-| [Option C-2 — Scheduled cron](c2_git_cron.md) | Timer (hourly, or every 15 min) | Simplest start, hourly lag acceptable |
+| [Option C-4 — Claude Code Loop](c4_loop.md) | Claude self-paces based on activity | Simplest setup, fully native, needs persistent session |
+| [Option C-2 — Scheduled cron](c2_git_cron.md) | Timer (hourly, or every 15 min) | Headless, predictable run times |
 | [Option C-3 — GitHub Actions + Worker](c3_github_actions.md) | GitHub push events + Slack/Drive webhooks | 1–2 min lag, no server |
 | [Option C-1 — Webhook server](c1_webhook_server.md) | Direct webhooks from all sources | Seconds lag, you operate a server |
 
@@ -154,6 +156,7 @@ Not needed for most orgs starting out. Evaluate after Option C-1 or Option C-3 i
 
 ## Continue to your chosen option
 
-- [Option C-2 — Git + Cron](c2_git_cron.md) ← start here
+- [Option C-4 — Claude Code Loop](c4_loop.md) ← simplest start
+- [Option C-2 — Git + Cron](c2_git_cron.md) ← headless start
 - [Option C-3 — GitHub Actions + Cloudflare Worker](c3_github_actions.md)
 - [Option C-1 — Webhook Server](c1_webhook_server.md)
