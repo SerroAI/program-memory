@@ -57,24 +57,7 @@ flowchart TD
     HORIZON_FACTUAL --> Q_DISCIPLINE
 
     HORIZON_SEMANTIC["⚠️ Technical long-horizon reasoning is harder.\n\nWhat this means:\nQuestions about how concepts, architecture, or\napproach evolved over time - not just what changed,\nbut what it means. e.g. 'Has our approach to\nauthentication drifted from the original design?'\nor 'Which symbols accumulated the most\nunplanned responsibility over 6 months?'\n\nWhy keyword search falls short:\nGitHub MCP matches text in commit messages\nand diffs. Conceptual evolution often uses\ndifferent words at different times - the signal\nexists but keyword search won't surface it.\nThis is a recall gap, not a correctness problem.\n\nWorkaround: Restrict to keyword-safe forms.\n'Find commits mentioning auth' works.\n'Find commits where auth got more complex'\ndoes not - that requires semantic matching.\nSee: family_c/c2_git_cron/"]
-    HORIZON_SEMANTIC --> Q_QUERY_TYPE
-
-    %% ─── QUERY TYPE ──────────────────────────────────────────────────
-    Q_QUERY_TYPE{"Keyword/grep matching sufficient,\nor do you need semantic search?"}
-
-    Q_QUERY_TYPE -- "Keyword ok\n'find commits mentioning auth'\n'what changed in Q3'" --> FAMILYC_ENTRY
-    Q_QUERY_TYPE -- "Need semantic search\n'how has auth evolved'\n'which decisions reversed direction'" --> Q_ENTITY_RESOLUTION
-
-    Q_ENTITY_RESOLUTION{"Semantic precision needed?\nTopic/name embedding search,\nor full entity resolution\nacross tools?"}
-
-    Q_ENTITY_RESOLUTION -- "Topic + name matching ok\n(embedding search over digests)" --> EMBEDDING_STORE_PATH
-    Q_ENTITY_RESOLUTION -- "Need entity resolution\n('Jake' in Slack = 'jkim' in git\n= '@j.kim' in docs — auto-linked)" --> ENTITY_RES_TRADEOFF
-
-    EMBEDDING_STORE_PATH["✅ Embedding store handles this.\nCocoIndex + vector store (Chroma, pgvector, Pinecone)\nhandles semantic search over structured digests.\n'How has auth evolved' works well against\nconsistently formatted digest content.\n\nSetup: run your C-4 loop first, add CocoIndex\nafter digests are stable.\nSee: family_c/instructions.md#c4--choose-your-memory-store\n     verdict.md"]
-    EMBEDDING_STORE_PATH --> FAMILYC_ENTRY
-
-    ENTITY_RES_TRADEOFF["⚠️ Full entity resolution is Serro's core moat.\n\nWhat this means: 'Jake' in a Slack message,\n'jkim' in a commit, and '@j.kim' in a doc are\nresolved to the same person — automatically,\nacross all tools, over time. This requires an\norg ontology built from years of signal ingestion.\n\nWhat self-hosted gets you: embedding search over\ndigest content. Declaring contributor identities\nexplicitly in program_mappings.yaml (slack_ids,\nGitHub handles) reduces ambiguity but does not\nsolve cross-tool identity linking.\n\nWorkaround: Explicit slack_ids + GitHub handles\nin program_mappings.yaml cover ~80% of attribution\ncases. The remaining 20% requires an ontology.\n\nVerdict: If cross-tool entity resolution is a\nhard requirement, Serro is the only production-ready\npath today. Self-hosted with explicit mappings is\na reasonable approximation for most orgs.\nSee: serro.ai"]
-    ENTITY_RES_TRADEOFF --> SERRO
+    HORIZON_SEMANTIC --> FAMILYC_ENTRY
 
     %% ─── TEAM DISCIPLINE ─────────────────────────────────────────────
     Q_DISCIPLINE{"3. Team discipline for\nmapping maintenance?\nWill the team update\nprogram_mappings.yaml\nwhen channels/repos change?"}
@@ -127,22 +110,50 @@ flowchart TD
     FAMILYB --> Q_VALIDATE_MEMORY
     FAMILYA --> Q_VALIDATE_MEMORY
 
-    %% ─── FAMILY B ────────────────────────────────────────────────────
-    FAMILYC_ENTRY{"7. Family C ingestion approach?\nStart with C-4 unless you have\na specific reason not to."}
+    %% ─── FAMILY C CAPABILITY SELECTION ──────────────────────────────
+    FAMILYC_ENTRY{"7. Family C: what capabilities\ndo you need?\n(or use Serro for fully managed)"}
 
-    FAMILYC_ENTRY -- "C-4: Self-paced, Claude-native\n(recommended start — one /loop command)" --> C4
-    FAMILYC_ENTRY -- "C-2: Headless, fixed interval\n(no active session needed)" --> C2
-    FAMILYC_ENTRY -- "C-3: Minutes acceptable\n(GitHub Actions + Worker)" --> Q_C3_INFRA
-    FAMILYC_ENTRY -- "C-1: Seconds required\n(always-on server)" --> Q_C1_INFRA
+    FAMILYC_ENTRY --> Q_SEMANTIC
 
-    Q_C3_INFRA{"8. Can you write and deploy\na ~10-line Cloudflare Worker?\n(free tier, stateless, no uptime mgmt)"}
+    Q_SEMANTIC{"Need semantic search?\n'How has auth evolved?'\n'Which decisions reversed direction?'"}
+
+    Q_SEMANTIC -- "No" --> Q_ENTITY_RES
+    Q_SEMANTIC -- "Yes" --> SEMANTIC_OPTIONS
+
+    SEMANTIC_OPTIONS["Semantic search:\n\n🔧 Self-hosted:\nVector DB (Chroma, pgvector, Pinecone) stores embeddings.\nCocoIndex or LaserData transforms digest output into\nindexed vectors. Enables similarity search over\nstructured digest content.\n\nSetup: run C-4 loop first, add CocoIndex after\ndigests are stable.\n\n🔵 Serro:\nBuilt-in embedding index over all ingested signals.\nNo setup, always current.\nSee: cocoindex.io · laserdata.ai · serro.ai"]
+    SEMANTIC_OPTIONS --> Q_ENTITY_RES
+
+    Q_ENTITY_RES{"Need entity resolution?\n'Who is @jkim across Slack,\ngit commits, and Drive docs?'"}
+
+    Q_ENTITY_RES -- "No" --> Q_TEMPORAL
+    Q_ENTITY_RES -- "Yes" --> ENTITY_OPTIONS
+
+    ENTITY_OPTIONS["Entity resolution:\n\n🔧 Self-hosted:\nGraph DB (Amazon Neptune, FalkorDB) stores entities\nand relationships. CocoIndex or LaserData transforms\ndigests into typed graph nodes (person, repo, decision).\nWorkaround: declare all identities explicitly in\nprogram_mappings.yaml (slack_ids, GitHub handles) —\ncovers ~80% of attribution without graph infra.\n\n🔵 Serro:\nProprietary ontology links people, repos, and decisions\nautomatically across all tools from day one.\nSee: cocoindex.io · laserdata.ai · serro.ai"]
+    ENTITY_OPTIONS --> Q_TEMPORAL
+
+    Q_TEMPORAL{"Need temporal accuracy?\n'What was auth's state in March?'\n'When did scope drift begin?'"}
+
+    Q_TEMPORAL -- "No" --> Q_INGESTION
+    Q_TEMPORAL -- "Yes" --> TEMPORAL_OPTIONS
+
+    TEMPORAL_OPTIONS["Temporal accuracy:\n\n🔧 Self-hosted:\nFalkorDB supports temporal graph snapshots —\nquery the graph as it existed at any point in time.\nAlternative: append-only digest files in git give a\ncoarse timeline for free (one snapshot per run).\nCocoIndex handles incremental re-indexing so only\nchanged signals are re-processed.\n\n🔵 Serro:\nContinuous event-driven ingestion with timestamps\non every signal — full temporal query support.\nSee: github.com/FalkorDB · cocoindex.io · serro.ai"]
+    TEMPORAL_OPTIONS --> Q_INGESTION
+
+    Q_INGESTION{"8. Which ingestion method?\nStart with C-4 unless you\nhave a specific reason not to."}
+
+    Q_INGESTION -- "C-4: Self-paced, Claude-native\n(recommended start — one /loop command)" --> C4
+    Q_INGESTION -- "C-2: Headless, fixed interval\n(no active session needed)" --> C2
+    Q_INGESTION -- "C-3: Minutes acceptable\n(GitHub Actions + Worker)" --> Q_C3_INFRA
+    Q_INGESTION -- "C-1: Seconds required\n(always-on server)" --> Q_C1_INFRA
+
+    Q_C3_INFRA{"9. Can you write and deploy\na ~10-line Cloudflare Worker?\n(free tier, stateless, no uptime mgmt)"}
     Q_C3_INFRA -- Yes --> C3
     Q_C3_INFRA -- "No / prefer simpler" --> B3_TRADEOFF
 
     B3_TRADEOFF["⚠️ Tradeoff: C2 with shorter cron interval\n\nIf Cloudflare Worker is too much,\nC2 with a 15-minute cron interval achieves\n~15 min latency with zero new code.\nNot as good as C3 but meaningfully better\nthan hourly polling.\n\nWorkaround: Set cron to */15 instead of @hourly.\nVerdict: Acceptable if 15-min lag is tolerable.\nSee: family_c/c2_git_cron.md"]
     B3_TRADEOFF --> C2
 
-    Q_C1_INFRA{"8. Willing to operate\nan always-on server?\n(uptime, monitoring, webhook\nsig validation, Drive channel\nrenewal every 24h)"}
+    Q_C1_INFRA{"9. Willing to operate\nan always-on server?\n(uptime, monitoring, webhook\nsig validation, Drive channel\nrenewal every 24h)"}
     Q_C1_INFRA -- Yes --> C1
     Q_C1_INFRA -- "No" --> B1_TRADEOFF
 
@@ -258,7 +269,9 @@ flowchart TD
     style PROACTIVE_THRESHOLDS fill:#fff3cd,stroke:#ffc107,color:#000
     style MEMORY_GATE_TRADEOFF fill:#fff3cd,stroke:#ffc107,color:#000
     style SERRO fill:#dbeafe,stroke:#3b82f6,color:#000
-    style EMBEDDING_STORE_PATH fill:#d4edda,stroke:#28a745,color:#000
+    style SEMANTIC_OPTIONS fill:#fff3cd,stroke:#ffc107,color:#000
+    style ENTITY_OPTIONS fill:#fff3cd,stroke:#ffc107,color:#000
+    style TEMPORAL_OPTIONS fill:#fff3cd,stroke:#ffc107,color:#000
 ```
 
 ---
