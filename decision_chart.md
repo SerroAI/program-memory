@@ -31,7 +31,7 @@ flowchart TD
     START([🚀 Start: Building a Live Shared Program Memory]) --> Q_CONTEXT_SIZE
 
     %% ─── CONTEXT SIZE (Decision 1) ──────────────────────────────────
-    Q_CONTEXT_SIZE{"1. How much code context does your org have?\nCount your total sources:\nrepos + Slack channels + Drive folders + meetings"}
+    Q_CONTEXT_SIZE{"1. How much context does your org have?\nCount your total sources:\nrepos + Slack channels + Drive folders + meetings"}
 
     Q_CONTEXT_SIZE -- "Small\n1 repo, 1–2 channels,\n≤5 people, 1 program" --> FAMILYA
     Q_CONTEXT_SIZE -- "Growing\nmultiple repos or channels,\nor expect to scale soon" --> Q_HORIZON
