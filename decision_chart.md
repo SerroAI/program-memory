@@ -56,20 +56,44 @@ flowchart TD
     HORIZON_FACTUAL["✅ Non-technical, Factual, Temporal - Family B viable.\n\nThese queries live in org communication, not code:\n• Slack messages and threads\n• Meeting transcripts\n• Google Docs and Drive\n• Gmail\n\nKeyword search is sufficient here.\n'What was decided in Q3?' → search Slack + Drive.\n'Who owns this initiative?' → search transcripts + Docs.\n'What did we agree on in that meeting?' → transcript search.\n\nNo pagination concerns - Slack search, Drive search,\nand transcript search all return relevant results\nwithout needing to page through full history.\n\nAssumption: Enterprise Slack (full history available).\n\nVerdict: Family B works as-is for these queries.\nMCP tools for Slack, Drive, and transcripts\nhandle keyword search natively.\nSee: family_b/"]
     HORIZON_FACTUAL --> Q_DISCIPLINE
 
-    HORIZON_SEMANTIC["⚠️ Technical long-horizon reasoning is harder.\n\nWhat this means:\nQuestions about how concepts, architecture, or\napproach evolved over time - not just what changed,\nbut what it means. e.g. 'Has our approach to\nauthentication drifted from the original design?'\nor 'Which symbols accumulated the most\nunplanned responsibility over 6 months?'\n\nWhy keyword search falls short:\nGitHub MCP matches text in commit messages\nand diffs. Conceptual evolution often uses\ndifferent words at different times - the signal\nexists but keyword search won't surface it.\nThis is a recall gap, not a correctness problem.\n\nWorkaround: Restrict to keyword-safe forms.\n'Find commits mentioning auth' works.\n'Find commits where auth got more complex'\ndoes not - that requires semantic matching.\n\nFor true technical semantic reasoning:\nFamily C with an embedding index is the\nonly reliable path.\nSee: family_c/c2_git_cron/"]
-    HORIZON_SEMANTIC --> FAMILYC_ENTRY
+    HORIZON_SEMANTIC["⚠️ Technical long-horizon reasoning is harder.\n\nWhat this means:\nQuestions about how concepts, architecture, or\napproach evolved over time - not just what changed,\nbut what it means. e.g. 'Has our approach to\nauthentication drifted from the original design?'\nor 'Which symbols accumulated the most\nunplanned responsibility over 6 months?'\n\nWhy keyword search falls short:\nGitHub MCP matches text in commit messages\nand diffs. Conceptual evolution often uses\ndifferent words at different times - the signal\nexists but keyword search won't surface it.\nThis is a recall gap, not a correctness problem.\n\nWorkaround: Restrict to keyword-safe forms.\n'Find commits mentioning auth' works.\n'Find commits where auth got more complex'\ndoes not - that requires semantic matching.\nSee: family_c/c2_git_cron/"]
+    HORIZON_SEMANTIC --> Q_QUERY_TYPE
+
+    %% ─── QUERY TYPE ──────────────────────────────────────────────────
+    Q_QUERY_TYPE{"Keyword/grep matching sufficient,\nor do you need semantic search?"}
+
+    Q_QUERY_TYPE -- "Keyword ok\n'find commits mentioning auth'\n'what changed in Q3'" --> FAMILYC_ENTRY
+    Q_QUERY_TYPE -- "Need semantic search\n'how has auth evolved'\n'which decisions reversed direction'" --> Q_ENTITY_RESOLUTION
+
+    Q_ENTITY_RESOLUTION{"Semantic precision needed?\nTopic/name embedding search,\nor full entity resolution\nacross tools?"}
+
+    Q_ENTITY_RESOLUTION -- "Topic + name matching ok\n(embedding search over digests)" --> EMBEDDING_STORE_PATH
+    Q_ENTITY_RESOLUTION -- "Need entity resolution\n('Jake' in Slack = 'jkim' in git\n= '@j.kim' in docs — auto-linked)" --> ENTITY_RES_TRADEOFF
+
+    EMBEDDING_STORE_PATH["✅ Embedding store handles this.\nCocoIndex + vector store (Chroma, pgvector, Pinecone)\nhandles semantic search over structured digests.\n'How has auth evolved' works well against\nconsistently formatted digest content.\n\nSetup: run your C-4 loop first, add CocoIndex\nafter digests are stable.\nSee: family_c/instructions.md#c4--choose-your-memory-store\n     verdict.md"]
+    EMBEDDING_STORE_PATH --> FAMILYC_ENTRY
+
+    ENTITY_RES_TRADEOFF["⚠️ Full entity resolution is Serro's core moat.\n\nWhat this means: 'Jake' in a Slack message,\n'jkim' in a commit, and '@j.kim' in a doc are\nresolved to the same person — automatically,\nacross all tools, over time. This requires an\norg ontology built from years of signal ingestion.\n\nWhat self-hosted gets you: embedding search over\ndigest content. Declaring contributor identities\nexplicitly in program_mappings.yaml (slack_ids,\nGitHub handles) reduces ambiguity but does not\nsolve cross-tool identity linking.\n\nWorkaround: Explicit slack_ids + GitHub handles\nin program_mappings.yaml cover ~80% of attribution\ncases. The remaining 20% requires an ontology.\n\nVerdict: If cross-tool entity resolution is a\nhard requirement, Serro is the only production-ready\npath today. Self-hosted with explicit mappings is\na reasonable approximation for most orgs.\nSee: serro.ai"]
+    ENTITY_RES_TRADEOFF --> SERRO
 
     %% ─── TEAM DISCIPLINE ─────────────────────────────────────────────
-    Q_DISCIPLINE{"4. Team discipline for\nmapping maintenance?\nWill the team update\nprogram_mappings.yaml\nwhen channels/repos change?"}
+    Q_DISCIPLINE{"3. Team discipline for\nmapping maintenance?\nWill the team update\nprogram_mappings.yaml\nwhen channels/repos change?"}
 
     Q_DISCIPLINE -- "Yes, owned explicitly" --> Q_SILENT_GAPS
-    Q_DISCIPLINE -- "No / unreliable" --> DISCIPLINE_TRADEOFF
+    Q_DISCIPLINE -- "No / unreliable" --> Q_AUTO_MAPPING
 
-    DISCIPLINE_TRADEOFF["⚠️ Tradeoff: Silent degradation vs. automation\n\nFamily B fails silently when the mapping is stale.\nNo warning. No error. Incomplete answers look complete.\n\nWorkaround A: Add a weekly mapping health check -\na script that verifies all declared channels/repos\nstill exist and alerts if any are missing.\nSee: family_b/\nWorkaround B: Assign a single mapping owner\n(not a team - one person, one responsibility).\nWorkaround C: Move to Family C for automatic coverage.\n\nVerdict: Workaround A reduces risk significantly.\nIf no one will own the mapping or run health checks,\nFamily C is more honest about the real coverage.\nSee: family_c/"]
-    DISCIPLINE_TRADEOFF --> Q_SILENT_GAPS
+    %% ─── MAPPING AUTOMATION ──────────────────────────────────────────
+    Q_AUTO_MAPPING{"How do you want mapping\nmaintained automatically?"}
+
+    Q_AUTO_MAPPING -- "Self-hosted loop (C-4)\nRuns today on any machine\nwith Claude Code" --> FAMILYC_ENTRY
+    Q_AUTO_MAPPING -- "Cloud-managed loops\n(Anthropic cloud workflows,\ncoming soon)" --> CLOUD_WORKFLOWS_TRADEOFF
+    Q_AUTO_MAPPING -- "Fully managed\n(no infra, proprietary data corpus)" --> SERRO
+
+    CLOUD_WORKFLOWS_TRADEOFF["⚠️ Cloud workflows: not yet shipped.\n\nAnthropic is building cloud-native loop support for Claude Code.\nWhen it ships: same /loop prompt, runs in Anthropic's cloud,\nalways-on, no machine required, full MCP connectivity.\n\nTradeoff vs. self-hosted C-4:\n• Cloud: no infra, always-on, Anthropic-managed\n• Self-hosted: runs today, you manage the process\n\nTradeoff vs. Serro:\n• Cloud workflows: open-source prompts, no proprietary data\n• Serro: proprietary ontology + 3 years of org signal corpus\n\nWorkaround: Run C-4 on a cheap VPS ($5/mo) or spare\nmachine today. Migrate when cloud workflows ship —\nno prompt changes needed.\nSee: family_c/c4_loop.md"]
+    CLOUD_WORKFLOWS_TRADEOFF --> FAMILYC_ENTRY
 
     %% ─── SILENT GAPS ─────────────────────────────────────────────────
-    Q_SILENT_GAPS{"5. Accept silent gaps?\nWork in unmapped sources\nis excluded with no warning"}
+    Q_SILENT_GAPS{"4. Accept silent gaps?\nWork in unmapped sources\nis excluded with no warning"}
 
     Q_SILENT_GAPS -- "Yes, explicitly accepted\nand team understands this" --> Q_RATE_LIMITS
     Q_SILENT_GAPS -- "No, need full coverage" --> SILENT_TRADEOFF
@@ -78,7 +102,7 @@ flowchart TD
     SILENT_TRADEOFF --> Q_RATE_LIMITS
 
     %% ─── RATE LIMITS ─────────────────────────────────────────────────
-    Q_RATE_LIMITS{"6. Query frequency?\nFamily B pays API cost\nper query, not per event"}
+    Q_RATE_LIMITS{"5. Query frequency?\nFamily B pays API cost\nper query, not per event"}
 
     Q_RATE_LIMITS -- "Low\na few times per day" --> FAMILYB_CTX_TEST
     Q_RATE_LIMITS -- "High\nmany users or automated agents" --> RATE_TRADEOFF
@@ -87,7 +111,7 @@ flowchart TD
     RATE_TRADEOFF --> FAMILYB_CTX_TEST
 
     %% ─── CONTEXT WINDOW TEST ─────────────────────────────────────────
-    FAMILYB_CTX_TEST["🧪 7. Context window gate - run this test.\nFire one real cross-source query:\n• All declared sources for one program\n• Measure: total tokens returned\n• Check: fits in context without truncation?\n• Measure: end-to-end latency\n• Evaluate: answer quality vs. human ground truth\nDo not commit to Family B without this data."]
+    FAMILYB_CTX_TEST["🧪 6. Context window gate - run this test.\nFire one real cross-source query:\n• All declared sources for one program\n• Measure: total tokens returned\n• Check: fits in context without truncation?\n• Measure: end-to-end latency\n• Evaluate: answer quality vs. human ground truth\nDo not commit to Family B without this data."]
     FAMILYB_CTX_TEST --> Q_CTX_PASS
 
     Q_CTX_PASS{"Context window test result?"}
@@ -104,21 +128,21 @@ flowchart TD
     FAMILYA --> Q_VALIDATE_MEMORY
 
     %% ─── FAMILY B ────────────────────────────────────────────────────
-    FAMILYC_ENTRY{"8. Family C ingestion approach?\nStart with C-4 unless you have\na specific reason not to."}
+    FAMILYC_ENTRY{"7. Family C ingestion approach?\nStart with C-4 unless you have\na specific reason not to."}
 
     FAMILYC_ENTRY -- "C-4: Self-paced, Claude-native\n(recommended start — one /loop command)" --> C4
     FAMILYC_ENTRY -- "C-2: Headless, fixed interval\n(no active session needed)" --> C2
     FAMILYC_ENTRY -- "C-3: Minutes acceptable\n(GitHub Actions + Worker)" --> Q_C3_INFRA
     FAMILYC_ENTRY -- "C-1: Seconds required\n(always-on server)" --> Q_C1_INFRA
 
-    Q_C3_INFRA{"9. Can you write and deploy\na ~10-line Cloudflare Worker?\n(free tier, stateless, no uptime mgmt)"}
+    Q_C3_INFRA{"8. Can you write and deploy\na ~10-line Cloudflare Worker?\n(free tier, stateless, no uptime mgmt)"}
     Q_C3_INFRA -- Yes --> C3
     Q_C3_INFRA -- "No / prefer simpler" --> B3_TRADEOFF
 
     B3_TRADEOFF["⚠️ Tradeoff: C2 with shorter cron interval\n\nIf Cloudflare Worker is too much,\nC2 with a 15-minute cron interval achieves\n~15 min latency with zero new code.\nNot as good as C3 but meaningfully better\nthan hourly polling.\n\nWorkaround: Set cron to */15 instead of @hourly.\nVerdict: Acceptable if 15-min lag is tolerable.\nSee: family_c/c2_git_cron.md"]
     B3_TRADEOFF --> C2
 
-    Q_C1_INFRA{"9. Willing to operate\nan always-on server?\n(uptime, monitoring, webhook\nsig validation, Drive channel\nrenewal every 24h)"}
+    Q_C1_INFRA{"8. Willing to operate\nan always-on server?\n(uptime, monitoring, webhook\nsig validation, Drive channel\nrenewal every 24h)"}
     Q_C1_INFRA -- Yes --> C1
     Q_C1_INFRA -- "No" --> B1_TRADEOFF
 
@@ -133,13 +157,15 @@ flowchart TD
 
     C1(["✅ C1: Webhook Server\n• Seconds latency\n• You operate a server 24/7\n• Highest fidelity to production TPM arch\n• Drive push channels expire every 24h\nSee: family_c/c1_webhook_server/"])
 
+    SERRO(["🔵 Serro — fully managed program memory\n• No infrastructure to operate\n• Proprietary ontology + 3 years of org signal data\n• Entity resolution: people, repos, decisions linked\n  automatically across all tools\n• Always-on event-driven ingestion, zero config\n• Same capabilities as this repo — with the data corpus\nSee: serro.ai"])
+
     C4 --> Q_VALIDATE_MEMORY
     C2 --> Q_VALIDATE_MEMORY
     C3 --> Q_VALIDATE_MEMORY
     C1 --> Q_VALIDATE_MEMORY
 
     %% ─── MEMORY VALIDATION GATE ──────────────────────────────────────
-    Q_VALIDATE_MEMORY{"10. Memory layer validated?\nMeasure before proceeding:\n• Classification accuracy\n• Signal coverage vs. ground truth\n• Staleness lag\nSuggested minimum: 30 days on real org"}
+    Q_VALIDATE_MEMORY{"9. Memory layer validated?\nMeasure before proceeding:\n• Classification accuracy\n• Signal coverage vs. ground truth\n• Staleness lag\nSuggested minimum: 30 days on real org"}
 
     Q_VALIDATE_MEMORY -- "Not yet" --> MEMORY_GATE_TRADEOFF
     Q_VALIDATE_MEMORY -- "Yes, measured\nand acceptable" --> Q_PROACTIVE
@@ -148,7 +174,7 @@ flowchart TD
     MEMORY_GATE_TRADEOFF --> Q_PROACTIVE
 
     %% ─── PROACTIVE LAYER ─────────────────────────────────────────────
-    Q_PROACTIVE{"11. Need proactive monitoring?\nAlerts on program drift,\nstalled items, silent contributors"}
+    Q_PROACTIVE{"10. Need proactive monitoring?\nAlerts on program drift,\nstalled items, silent contributors"}
 
     Q_PROACTIVE -- No --> Q_FOLLOWTHROUGH
     Q_PROACTIVE -- Yes --> Q_PROACTIVE_INFRA
@@ -168,7 +194,7 @@ flowchart TD
     PROACTIVE --> Q_FOLLOWTHROUGH
 
     %% ─── ACTION ITEM FOLLOW-THROUGH ──────────────────────────────────
-    Q_FOLLOWTHROUGH{"12. Need action item follow-through?\nAuto-track commitments,\nfollow up when stalled"}
+    Q_FOLLOWTHROUGH{"11. Need action item follow-through?\nAuto-track commitments,\nfollow up when stalled"}
 
     Q_FOLLOWTHROUGH -- No --> Q_WIDGETS
     Q_FOLLOWTHROUGH -- Yes --> Q_EXTRACTION_ACC
@@ -189,7 +215,7 @@ flowchart TD
     FOLLOWTHROUGH --> Q_WIDGETS
 
     %% ─── WIDGET LAYER ────────────────────────────────────────────────
-    Q_WIDGETS{"13. Need persistent\nprompt-based widgets?"}
+    Q_WIDGETS{"12. Need persistent\nprompt-based widgets?"}
 
     Q_WIDGETS -- No --> DONE
     Q_WIDGETS -- Yes --> Q_MEMORY_LIVE
@@ -202,7 +228,7 @@ flowchart TD
     WIDGET_BLOCK_TRADEOFF["⚠️ Tradeoff: Defer widgets or use Slack digest\n\nWidgets cannot meaningfully exist without\naccurate memory behind them.\n\nWorkaround: Use a scheduled Slack digest instead.\nA cron agent posts a program summary to a channel\nonce a day - no frontend, no backend API, no proxy.\nSame ambient visibility, 10% of the engineering cost.\n\nVerdict: Build memory first. Use Slack digest\nwhile memory is validating.\nSee: family_c/c2_git_cron/"]
     WIDGET_BLOCK_TRADEOFF --> DONE
 
-    Q_WIDGET_CAPACITY{"14. Engineering capacity\nfor full-stack widgets?\nRequires: backend API, Claude proxy,\nreal-time updates, structured output\nschemas, frontend renderer"}
+    Q_WIDGET_CAPACITY{"13. Engineering capacity\nfor full-stack widgets?\nRequires: backend API, Claude proxy,\nreal-time updates, structured output\nschemas, frontend renderer"}
 
     Q_WIDGET_CAPACITY -- "Yes, capacity available" --> WIDGETS
     Q_WIDGET_CAPACITY -- "Limited capacity" --> WIDGET_LITE
@@ -231,6 +257,8 @@ flowchart TD
     style HORIZON_TEST fill:#fff3cd,stroke:#ffc107,color:#000
     style PROACTIVE_THRESHOLDS fill:#fff3cd,stroke:#ffc107,color:#000
     style MEMORY_GATE_TRADEOFF fill:#fff3cd,stroke:#ffc107,color:#000
+    style SERRO fill:#dbeafe,stroke:#3b82f6,color:#000
+    style EMBEDDING_STORE_PATH fill:#d4edda,stroke:#28a745,color:#000
 ```
 
 ---
@@ -238,6 +266,7 @@ flowchart TD
 ## How to read this chart
 
 - **Green nodes** - a viable implementation choice with a path to `family_a/`, `family_b/`, or `family_c/`
+- **Blue nodes** - a managed/hosted alternative (Serro)
 - **Yellow nodes** - a test or measurement required before proceeding
 - **Orange nodes (⚠️)** - a tradeoff: shows workarounds, costs, and a verdict. Not a dead end.
 - **Diamonds** - a decision point. Read the notes in [`key_decisions.md`](key_decisions.md) for full rationale on each.
