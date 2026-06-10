@@ -56,14 +56,7 @@ See [Family B — B2](../family_b/instructions.md#b2--create-a-shared-program-me
 
 Every teammate connects once. Two ways:
 
-**1 — Run Claude from inside the repo**
-
-```bash
-cd ~/program-memory
-claude "what's the status of auth modernization?"
-```
-
-**2 — Add it as a project in Claude Code**
+**Add it as a project in Claude Code**
 
 ```
 /project:add ~/path/to/program-memory

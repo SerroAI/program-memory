@@ -91,16 +91,7 @@ program-memory/
 
 Every teammate connects once. Two ways to do it:
 
-**1 — Run Claude from inside the repo (simplest)**
-
-```bash
-cd ~/program-memory
-claude "what's the status of auth modernization?"
-```
-
-Claude automatically reads `CLAUDE.md` on startup and all queries run in that context.
-
-**2 — Add it as a project in Claude Code**
+**Add it as a project in Claude Code**
 
 From inside any repo (your product code, wherever you normally work):
 

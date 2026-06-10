@@ -86,16 +86,7 @@ Slack: #mobile, #mobile-launch. Repos: org/ios, org/android.
 
 `CLAUDE.md` only does anything when Claude is pointed at this repo. The mapping file is just yaml until Claude is instructed to read it. Every teammate connects once.
 
-**1 — Run Claude from inside the repo**
-
-```bash
-cd ~/program-memory
-claude "what's blocked on mobile-launch right now?"
-```
-
-Claude reads `CLAUDE.md` on startup. All queries automatically use the mapping.
-
-**2 — Add it as a project in Claude Code**
+**Add it as a project in Claude Code**
 
 From inside any other repo (your product code, wherever you normally work):
 
