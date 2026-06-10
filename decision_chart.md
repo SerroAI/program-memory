@@ -107,8 +107,8 @@ flowchart TD
 
     %% ─── FAMILY A ────────────────────────────────────────────────────
     FAMILYB(["✅ Family B: Manual Source Mapping\n• Zero infrastructure beyond MCP servers\n• Always-live data - no staleness\n• Cross-source joins via targeted MCP calls\n• Accepted constraints documented above\n• Re-run context test as org grows\nSee: family_b/instructions.md"])
-    FAMILYB --> Q_VALIDATE_MEMORY
-    FAMILYA --> Q_VALIDATE_MEMORY
+    FAMILYB --> DONE
+    FAMILYA --> DONE
 
     %% ─── FAMILY C CAPABILITY SELECTION ──────────────────────────────
     FAMILYC_ENTRY{"7. Family C: what capabilities\ndo you need?\n(or use Serro for fully managed)"}
@@ -170,87 +170,12 @@ flowchart TD
 
     SERRO(["🔵 Serro — fully managed program memory\n• No infrastructure to operate\n• Proprietary ontology + 3 years of org signal data\n• Entity resolution: people, repos, decisions linked\n  automatically across all tools\n• Always-on event-driven ingestion, zero config\n• Same capabilities as this repo — with the data corpus\nSee: serro.ai"])
 
-    C4 --> Q_VALIDATE_MEMORY
-    C2 --> Q_VALIDATE_MEMORY
-    C3 --> Q_VALIDATE_MEMORY
-    C1 --> Q_VALIDATE_MEMORY
+    DONE(["📋 Implementation chosen.\nSee: README.md for next steps.\nSee: verdict.md for full rationale.\nFor other Family C options: family_c/"])
 
-    %% ─── MEMORY VALIDATION GATE ──────────────────────────────────────
-    Q_VALIDATE_MEMORY{"9. Memory layer validated?\nMeasure before proceeding:\n• Classification accuracy\n• Signal coverage vs. ground truth\n• Staleness lag\nSuggested minimum: 30 days on real org"}
-
-    Q_VALIDATE_MEMORY -- "Not yet" --> MEMORY_GATE_TRADEOFF
-    Q_VALIDATE_MEMORY -- "Yes, measured\nand acceptable" --> Q_PROACTIVE
-
-    MEMORY_GATE_TRADEOFF["⚠️ Tradeoff: Build ahead vs. build on validated foundation\n\nYou can build the proactive layer speculatively,\nbut noisy alerts from bad memory destroy trust\nfaster than having no alerts at all.\n\nWorkaround A: Run memory layer for 30 days,\nspot-check 20 signals for classification accuracy.\nTarget: >80% correct before proceeding.\nWorkaround B: Build proactive layer in staging\nagainst a test program while memory validates.\n\nVerdict: At minimum, measure classification accuracy\non a sample before shipping alerts to real users.\nSee: research/serro_capabilities.md (capability 1-2 measures)"]
-    MEMORY_GATE_TRADEOFF --> Q_PROACTIVE
-
-    %% ─── PROACTIVE LAYER ─────────────────────────────────────────────
-    Q_PROACTIVE{"10. Need proactive monitoring?\nAlerts on program drift,\nstalled items, silent contributors"}
-
-    Q_PROACTIVE -- No --> Q_FOLLOWTHROUGH
-    Q_PROACTIVE -- Yes --> Q_PROACTIVE_INFRA
-
-    Q_PROACTIVE_INFRA{"Always-on process available?\n(C1 server, C3 Actions cron,\nor separate scheduler)"}
-
-    Q_PROACTIVE_INFRA -- Yes --> PROACTIVE_THRESHOLDS
-    Q_PROACTIVE_INFRA -- "No (Family B only)" --> PROACTIVE_TRADEOFF
-
-    PROACTIVE_TRADEOFF["⚠️ Tradeoff: Scheduled alerts vs. real-time monitoring\n\nFamily B has no persistent trigger mechanism.\nBut a loop on a cron schedule approximates it.\n\nWorkaround A: Run a loop — a scheduled claude invocation\nthat reads program memory and posts a health\nsummary to Slack. No always-on process, just a cron.\nThis is the Serroloop pattern.\nWorkaround B: Add Option C-2 cron specifically for\nmonitoring while keeping Family B for interactive queries.\n\nVerdict: A loop running daily is 80% of the value of\nreal-time monitoring for most program management\nuse cases. Start there.\nSee: content_ideas/serroloop_blog_post.md\n     family_c/c2_git_cron/"]
-    PROACTIVE_TRADEOFF --> Q_FOLLOWTHROUGH
-
-    PROACTIVE_THRESHOLDS["⚠️ Define alert thresholds before writing code.\nNoisy alerts get ignored - which is\nworse than no alerts.\n\nMinimum to define:\n• What counts as 'stalled'? (X days no signal)\n• What counts as 'scope drift'? (signal outside charter)\n• What counts as 'silent contributor'? (Y days no activity)\n• Who gets alerted? (owner only? whole team?)\n\nSee: key_decisions.md (decision 10)"]
-    PROACTIVE_THRESHOLDS --> PROACTIVE
-
-    PROACTIVE(["✅ Proactive Monitoring — Serroloop pattern:\n• Loop agent wakes on schedule, reads program memory\n• Pulls live signals, compares against last digest\n• Flags: stalled PRs, unrecorded decisions, scope drift,\n  quiet programs\n• Posts digest + alerts via Slack MCP\n• Tunable thresholds per program\nSee: content_ideas/serroloop_blog_post.md"])
-    PROACTIVE --> Q_FOLLOWTHROUGH
-
-    %% ─── ACTION ITEM FOLLOW-THROUGH ──────────────────────────────────
-    Q_FOLLOWTHROUGH{"11. Need action item follow-through?\nAuto-track commitments,\nfollow up when stalled"}
-
-    Q_FOLLOWTHROUGH -- No --> Q_WIDGETS
-    Q_FOLLOWTHROUGH -- Yes --> Q_EXTRACTION_ACC
-
-    Q_EXTRACTION_ACC{"Extraction accuracy tested?\nMeeting transcripts are noisy.\nFalse positives = annoyance.\nTest on 20 real samples first."}
-
-    Q_EXTRACTION_ACC -- "Not tested" --> EXTRACTION_TEST
-    Q_EXTRACTION_ACC -- "Tested ≥85% precision" --> FOLLOWTHROUGH
-    Q_EXTRACTION_ACC -- "Tested <85% precision" --> EXTRACTION_TRADEOFF
-
-    EXTRACTION_TEST["🧪 Test before shipping.\nSample 20 real meetings/Slack threads.\nHuman-label actual action items.\nMeasure: precision + recall.\nTarget: >85% precision.\nLow precision = unwanted follow-ups = ignored system."]
-    EXTRACTION_TEST --> Q_WIDGETS
-
-    EXTRACTION_TRADEOFF["⚠️ Tradeoff: Reduce scope vs. improve extraction\n\nWorkaround A: Restrict to explicit formats only\n('Action: @owner by date') - lower recall,\nhigher precision.\nWorkaround B: Require human confirmation before\nfollowing up - removes automation but preserves\nthe tracking value.\nWorkaround C: Only extract from structured sources\n(Jira, Linear) not free-form meeting transcripts.\n\nVerdict: Explicit-format extraction is the\nhighest-precision starting point.\nSee: implementation/ (action items - coming)"]
-    EXTRACTION_TRADEOFF --> Q_WIDGETS
-
-    FOLLOWTHROUGH(["✅ Action Item Follow-Through:\n• Extract items at ingestion time\n• Store: owner, due date, source ref\n• Scheduled agent checks state daily\n• Follow up via Slack MCP with context\n• Allow dismiss / defer via reply\nSee: family_c/ (action items - coming)"])
-    FOLLOWTHROUGH --> Q_WIDGETS
-
-    %% ─── WIDGET LAYER ────────────────────────────────────────────────
-    Q_WIDGETS{"12. Need persistent\nprompt-based widgets?"}
-
-    Q_WIDGETS -- No --> DONE
-    Q_WIDGETS -- Yes --> Q_MEMORY_LIVE
-
-    Q_MEMORY_LIVE{"Memory live and validated?\nWidgets querying bad memory\nreturn confident wrong answers."}
-
-    Q_MEMORY_LIVE -- "No" --> WIDGET_BLOCK_TRADEOFF
-    Q_MEMORY_LIVE -- "Yes" --> Q_WIDGET_CAPACITY
-
-    WIDGET_BLOCK_TRADEOFF["⚠️ Tradeoff: Defer widgets or use Slack digest\n\nWidgets cannot meaningfully exist without\naccurate memory behind them.\n\nWorkaround: Use a scheduled Slack digest instead.\nA cron agent posts a program summary to a channel\nonce a day - no frontend, no backend API, no proxy.\nSame ambient visibility, 10% of the engineering cost.\n\nVerdict: Build memory first. Use Slack digest\nwhile memory is validating.\nSee: family_c/c2_git_cron/"]
-    WIDGET_BLOCK_TRADEOFF --> DONE
-
-    Q_WIDGET_CAPACITY{"13. Engineering capacity\nfor full-stack widgets?\nRequires: backend API, Claude proxy,\nreal-time updates, structured output\nschemas, frontend renderer"}
-
-    Q_WIDGET_CAPACITY -- "Yes, capacity available" --> WIDGETS
-    Q_WIDGET_CAPACITY -- "Limited capacity" --> WIDGET_LITE
-
-    WIDGET_LITE["⚠️ Tradeoff: Slack digest as widget substitute\n\nA scheduled agent that summarizes program state\nand posts to a dedicated Slack channel covers\n~60% of widget use cases with ~5% of the\nengineering investment.\n\nWorkaround: /schedule daily 8am:\n'Read program memory. Post a structured summary\nof each program's status, open blockers, and\nrecent decisions to #program-digest.'\n\nVerdict: Ship this first. Build real widgets\nonly after validating that the digest format\nactually gets read and acted on.\nSee: templates/CLAUDE_template.md"]
-    WIDGET_LITE --> DONE
-
-    WIDGETS(["✅ Widget Layer:\n• Backend API reads memory store\n• Claude API proxy (no key in browser)\n• Structured output schema per widget type\n• Polling or SSE for live updates\n• Each widget = stored prompt + refresh interval\nSee: family_c/ (widgets - coming)"])
-    WIDGETS --> DONE
-
-    DONE(["📋 Implementation chosen.\nSee: README.md for next steps.\nRead: critical_review.md before starting.\nReport measurements at each checkpoint."])
+    C4 --> DONE
+    C2 --> DONE
+    C3 --> DONE
+    C1 --> DONE
 
     %% ─── STYLES ──────────────────────────────────────────────────────
     style FAMILYB fill:#d4edda,stroke:#28a745,color:#000
@@ -259,15 +184,9 @@ flowchart TD
     style C4 fill:#d4edda,stroke:#28a745,color:#000
     style C2 fill:#d4edda,stroke:#28a745,color:#000
     style C3 fill:#d4edda,stroke:#28a745,color:#000
-    style PROACTIVE fill:#d4edda,stroke:#28a745,color:#000
-    style FOLLOWTHROUGH fill:#d4edda,stroke:#28a745,color:#000
-    style WIDGETS fill:#d4edda,stroke:#28a745,color:#000
     style DONE fill:#d4edda,stroke:#28a745,color:#000
     style FAMILYB_CTX_TEST fill:#fff3cd,stroke:#ffc107,color:#000
-    style EXTRACTION_TEST fill:#fff3cd,stroke:#ffc107,color:#000
     style HORIZON_TEST fill:#fff3cd,stroke:#ffc107,color:#000
-    style PROACTIVE_THRESHOLDS fill:#fff3cd,stroke:#ffc107,color:#000
-    style MEMORY_GATE_TRADEOFF fill:#fff3cd,stroke:#ffc107,color:#000
     style SERRO fill:#dbeafe,stroke:#3b82f6,color:#000
     style SEMANTIC_OPTIONS fill:#fff3cd,stroke:#ffc107,color:#000
     style ENTITY_OPTIONS fill:#fff3cd,stroke:#ffc107,color:#000
