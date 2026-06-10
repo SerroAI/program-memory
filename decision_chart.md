@@ -156,13 +156,13 @@ flowchart TD
     Q_PROACTIVE_INFRA -- Yes --> PROACTIVE_THRESHOLDS
     Q_PROACTIVE_INFRA -- "No (Family B only)" --> PROACTIVE_TRADEOFF
 
-    PROACTIVE_TRADEOFF["⚠️ Tradeoff: Scheduled alerts vs. real-time monitoring\n\nFamily B has no persistent trigger mechanism.\nBut a manual or scheduled query approximates it.\n\nWorkaround A: Daily scheduled claude invocation\nthat reads memory and posts a program health\nsummary to a Slack channel - no always-on process,\njust a cron job.\nWorkaround B: Add C2 cron specifically for monitoring\nwhile keeping Family B for interactive queries.\n\nVerdict: Daily digest is 80% of the value of\nreal-time monitoring for most program management\nuse cases. Start there.\nSee: family_c/c2_git_cron/"]
+    PROACTIVE_TRADEOFF["⚠️ Tradeoff: Scheduled alerts vs. real-time monitoring\n\nFamily B has no persistent trigger mechanism.\nBut a loop on a cron schedule approximates it.\n\nWorkaround A: Run a loop — a scheduled claude invocation\nthat reads program memory and posts a health\nsummary to Slack. No always-on process, just a cron.\nThis is the Serroloop pattern.\nWorkaround B: Add Option C-2 cron specifically for\nmonitoring while keeping Family B for interactive queries.\n\nVerdict: A loop running daily is 80% of the value of\nreal-time monitoring for most program management\nuse cases. Start there.\nSee: content_ideas/serroloop_blog_post.md\n     family_c/c2_git_cron/"]
     PROACTIVE_TRADEOFF --> Q_FOLLOWTHROUGH
 
     PROACTIVE_THRESHOLDS["⚠️ Define alert thresholds before writing code.\nNoisy alerts get ignored - which is\nworse than no alerts.\n\nMinimum to define:\n• What counts as 'stalled'? (X days no signal)\n• What counts as 'scope drift'? (signal outside charter)\n• What counts as 'silent contributor'? (Y days no activity)\n• Who gets alerted? (owner only? whole team?)\n\nSee: key_decisions.md (decision 10)"]
     PROACTIVE_THRESHOLDS --> PROACTIVE
 
-    PROACTIVE(["✅ Proactive Monitoring:\n• Scheduled agent reads program memory\n• Compares signals against charter boundaries\n• Flags: stalled items, drift, silent contributors\n• Posts alerts via Slack MCP\n• Tunable thresholds per program\nSee: family_c/c2_git_cron.md (proactive layer - coming)"])
+    PROACTIVE(["✅ Proactive Monitoring — Serroloop pattern:\n• Loop agent wakes on schedule, reads program memory\n• Pulls live signals, compares against last digest\n• Flags: stalled PRs, unrecorded decisions, scope drift,\n  quiet programs\n• Posts digest + alerts via Slack MCP\n• Tunable thresholds per program\nSee: content_ideas/serroloop_blog_post.md"])
     PROACTIVE --> Q_FOLLOWTHROUGH
 
     %% ─── ACTION ITEM FOLLOW-THROUGH ──────────────────────────────────

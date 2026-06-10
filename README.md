@@ -46,9 +46,9 @@ This repo documents how to replicate that using only Claude Code and native MCP 
 │  Widget layer       Prompt-based live views of       │
 │                     program state (requires layer 2) │  ← out of scope
 ├─────────────────────────────────────────────────────┤
-│  Proactive layer    Monitors programs, alerts on     │
-│                     drift, follows up on actions     │  ← out of scope
-│                     (requires layer 3)               │
+│  Proactive layer    Autonomous loop agent monitors   │
+│                     programs, flags blockers, posts  │  ← loop pattern (see below)
+│                     digests on a schedule            │
 ├─────────────────────────────────────────────────────┤
 │  Memory layer       Signals from GitHub/Slack/Drive  │
 │                     organized by program, queryable  │  ← this repo
@@ -56,7 +56,7 @@ This repo documents how to replicate that using only Claude Code and native MCP 
 └─────────────────────────────────────────────────────┘
 ```
 
-**This repo covers the memory layer only** - shared program memory that is live, queryable, and organized by program. The proactive and widget layers depend on it, but are out of scope here. We may expand scope in a future checkpoint.
+**This repo covers the memory layer in full.** The proactive layer is documented as a loop pattern — an autonomous Claude agent that wakes up on a schedule, reads program memory, and surfaces what matters without being asked. See [`content_ideas/serroloop_blog_post.md`](content_ideas/serroloop_blog_post.md) and the [loop pattern](#what-is-a-loop) concept below. The widget layer remains out of scope.
 
 ---
 
@@ -114,7 +114,7 @@ This is an honest comparison. The open-source version covers the architecture - 
 | Temporal code intelligence | ⚠️ Keyword search only - conceptual drift not detectable | ✅ Symbol-level history |
 | Engineer contribution history | ⚠️ Reconstructed from git blame + Slack - incomplete | ✅ Continuously maintained |
 | Voice-driven memory updates | ❌ | ✅ |
-| Proactive program coordination | ⚠️ Schedulable via cron - not event-driven | ✅ |
+| Proactive program coordination | ✅ Via loop pattern — scheduled Claude agent reads memory, flags blockers, posts Slack digest | ✅ Event-driven |
 | Zero-config setup | ❌ Requires mapping yaml + MCP server setup | ✅ |
 
 The biggest structural gap is the data corpus. Serro has been ingesting and indexing org signals since 2023. The open-source version starts from zero. That gap matters most for temporal reasoning and contribution history.
@@ -126,7 +126,7 @@ The biggest structural gap is the data corpus. Serro has been ingesting and inde
 | Layer | Status | Notes |
 |---|---|---|
 | Memory layer | 🟢 Instructions written | Three architectures documented with step-by-step guides. Not validated against a real org. |
-| Proactive layer | 🔴 Out of scope (checkpoint 1) | Requires memory layer to be validated first |
+| Proactive layer | 🟡 Loop pattern documented | Serroloop pattern covers monitoring, digest, and blocker detection. Implementation guide not yet written. |
 | Widget layer | 🔴 Out of scope (checkpoint 1) | Requires memory + proactive layers |
 
 **Checkpoint 1 complete:** capability analysis, architectural decision tree, and implementation options documented.  
@@ -203,9 +203,13 @@ templates/
 │   ├── charter.md
 │   └── CLAUDE_template.md
 │
-└── content/
-    ├── youtube_script_checkpoint_1.md
-    └── blog_post_checkpoint_1.md
+├── content/
+│   ├── youtube_script_checkpoint_1.md
+│   └── blog_post_checkpoint_1.md
+│
+└── content_ideas/
+    ├── youtube_script_v1.md             ← first-person YouTube script (Jake's POV)
+    └── serroloop_blog_post.md           ← loop pattern applied to program engineering
 ```
 
 ---
@@ -224,6 +228,7 @@ templates/
 - [What is program engineering?](#what-is-program-engineering)
 - [What is an agentic TPM?](#what-is-an-agentic-tpm)
 - [What is live program memory?](#what-is-live-program-memory-1)
+- [What is a loop?](#what-is-a-loop)
 - [Why not just use Jira, Linear, or Notion?](#why-not-just-use-jira-linear-or-notion)
 - [What is MCP and why does it matter here?](#what-is-mcp-and-why-does-it-matter-here)
 
@@ -278,6 +283,25 @@ Live program memory is an always-current, program-indexed record of everything t
 "Program-indexed" means signals are organized by program, not by tool or date. A question like "what changed about the auth program last quarter?" draws from GitHub, Slack, Drive, and meeting transcripts simultaneously.
 
 This is the problem this repo is trying to solve.
+
+---
+
+### What is a loop?
+
+A loop is an autonomous Claude agent that runs on a recurring interval. It wakes up, reads state, decides what matters, acts, and goes back to sleep — with no human prompting it.
+
+Applied to program engineering, a loop is what turns passive memory into active oversight. The memory layer answers questions when asked. A loop running on top of it asks the questions itself:
+
+- What PRs have been open longer than expected?
+- What Slack decisions haven't made it into any doc?
+- Which programs have gone quiet when they shouldn't have?
+- Has scope drifted outside the declared charter?
+
+The loop reads the program-memory repo, pulls live signals from declared sources, compares current state against the last digest, and posts a summary to Slack — or flags specific items that need attention.
+
+This is the **Serroloop pattern**: memory layer + autonomous loop = proactive program oversight that scales without headcount.
+
+See [`content_ideas/serroloop_blog_post.md`](content_ideas/serroloop_blog_post.md) for the full pattern and implementation sketch.
 
 ---
 
