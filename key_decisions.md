@@ -2,7 +2,7 @@
 
 > 13 decision points discovered through the design process. Each one has real consequences for architecture, complexity, and whether the system works at all. Ordered by when they appear in the build journey.
 
-For the full interactive decision tree, see [`../decision_chart.md`](../decision_chart.md).
+For the full interactive decision tree, see [`../memory_layer_decision_chart.md`](../memory_layer_decision_chart.md).
 
 ---
 

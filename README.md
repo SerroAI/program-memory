@@ -75,9 +75,9 @@ There are four levels. Each one is useful on its own. Each one is also the found
 
 See [`verdict.md`](verdict.md) for the full rationale and when to use each level.
 
-Full decision tree: [`decision_chart.md`](decision_chart.md)
+Full decision tree: [`memory_layer_decision_chart.md`](memory_layer_decision_chart.md)
 
-![Program Memory Architecture Decision Chart](decision_tree.png)
+![Program Memory Architecture Decision Chart](memory_layer_decision_chart.png)
 
 ---
 
@@ -126,7 +126,7 @@ Seven capabilities across three layers, with difficulty ratings and measurement 
 
 **2. Pick an architecture**
 ```
-decision_chart.md
+memory_layer_decision_chart.md
 ```
 A decision tree with 14 decision points. The wrong architecture choice costs weeks.
 
@@ -159,7 +159,7 @@ templates/
 ├── critical_review.md               ← honest critique of this analysis
 ├── comparative_analysis.md          ← what we tried, what broke, the key fork
 ├── key_decisions.md                 ← 14 decision points with rationale
-├── decision_chart.md                ← mermaid decision tree for picking an approach
+├── memory_layer_decision_chart.md                ← mermaid decision tree for picking an approach
 │
 ├── research/
 │   └── serro_capabilities.md        ← 7 capabilities, difficulty ratings, open questions

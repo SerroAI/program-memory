@@ -1,6 +1,6 @@
 # Prompt: Update the Architecture Decision Tree
 
-Paste this into a Claude session when you want to change `decision_chart.md`.
+Paste this into a Claude session when you want to change `memory_layer_decision_chart.md`.
 
 ---
 
@@ -8,7 +8,7 @@ You are helping update the architecture decision tree for this open-source Serro
 
 ## What the decision tree is
 
-`decision_chart.md` contains a Mermaid `flowchart TD` that routes engineering orgs to the right level of live program memory. It maps to three canonical levels:
+`memory_layer_decision_chart.md` contains a Mermaid `flowchart TD` that routes engineering orgs to the right level of live program memory. It maps to three canonical levels:
 
 - **Level 1 (Family A)** — Pull everything at query time. No config, no maintenance.
 - **Level 2 (Family B)** — Maintain `program_mappings.yaml`: programs, sources, people in one file.
@@ -32,7 +32,7 @@ The flowchart has these sections — work through them in order when making chan
 
 ## Files to read before editing
 
-1. `decision_chart.md` — the Mermaid source
+1. `memory_layer_decision_chart.md` — the Mermaid source
 2. `verdict.md` — the 3-level rationale; your changes must stay consistent with this
 3. `key_decisions.md` — rationale behind each decision node (13 points)
 4. `comparative_analysis.md` — what was tried and why it failed; don't re-open dead ends
@@ -55,4 +55,4 @@ Tell me what you want to change. Common update types:
 - **Reflect new level framing** — if the 3-level model changes, update routing nodes accordingly
 - **Fix a routing error** — describe the current behavior and the correct behavior
 
-After each change, I will update both the Mermaid source in `decision_chart.md` and the introductory summary table at the top of the file if the family descriptions change.
+After each change, I will update both the Mermaid source in `memory_layer_decision_chart.md` and the introductory summary table at the top of the file if the family descriptions change.

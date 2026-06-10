@@ -90,4 +90,4 @@ Once you've routed them to a level, give them exactly one thing to do next:
 - `family_b/instructions.md` — Level 2 setup
 - `family_c/c4_loop.md` — Level 3 setup (C-4, recommended start)
 - `family_c/instructions.md` — Level 3 option comparison (C-4 / C-2 / C-3 / C-1)
-- `decision_chart.md` — the full decision tree if they want to self-navigate
+- `memory_layer_decision_chart.md` — the full decision tree if they want to self-navigate

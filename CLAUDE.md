@@ -8,7 +8,7 @@ A research and implementation guide for building an open-source Serro replica us
 2. `research/serro_capabilities.md` - the 7 Serro capabilities we're replicating, with measurement rubrics
 3. `comparative_analysis.md` - what was evaluated and why, including dead ends and the key architectural fork
 4. `key_decisions.md` - the 13 decision points with rationale
-5. `decision_chart.md` - mermaid decision tree for picking an architecture
+5. `memory_layer_decision_chart.md` - mermaid decision tree for picking an architecture
 6. `family_a/` - Full Context Pull: no config, pull all sources at query time (micro-orgs)
 7. `family_b/` - Manual Source Mapping: declare sources per program in yaml
 8. `family_c/` - Auto-Ingestion: C1 (webhook server), C2 (git+cron), C3 (GitHub Actions)
