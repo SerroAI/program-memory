@@ -60,44 +60,21 @@ This repo documents how to replicate that using only Claude Code and native MCP 
 
 ---
 
-## Which architecture fits your org?
+## Three levels of live program memory
 
-There are three approaches. Pick based on org size and what kind of reasoning you need.
+There are three levels. Each one is useful on its own. Each one is also the foundation for the next.
 
-```
-Where to start
-      │
-      ▼
-┌─────────────────────────┐
-│  Small org?             │  yes ──▶  Family A
-│  ≤5 eng, ≤20 sources    │           just pull everything in
-└─────────────────────────┘
-      │ no
-      ▼
-┌─────────────────────────┐
-│  Beyond keyword search? │  no  ──▶  Family B
-│  semantic · history ·   │           map sources, then query
-│  scale                  │
-└─────────────────────────┘
-      │ yes
-      ▼
-   Family C — Option C-4 ★
-   Claude loop as ingestion pipeline
+| Level | What you do | What you get | Families |
+|---|---|---|---|
+| **1 — Pull** | Nothing. Claude pulls all sources at query time. | Instant setup. Works until context fills up. | Family A |
+| **2 — Map** | Maintain `program_mappings.yaml` — programs, people, sources in one file. | Scoped queries, contributor attribution, action item follow-up. | Family B |
+| **3 — Loop** | A Claude loop automaintains the digests. Optionally pipe into a graph with CocoIndex. | Always-current memory. Semantic search. Historical reasoning. | Family C (C-4 start) |
 
+Most orgs start at Level 1 and move up when they hit the limit. The mapping file (`program_mappings.yaml`) is the same at every level — you write it once and it carries forward.
 
-   or build on top of Serro  ──▶  serro.ai
-```
+**Start at Level 3 if you already know you need it.** One `/loop` command, no other infrastructure required. See [`verdict.md`](verdict.md) for the full rationale and when to use each level.
 
-| Family | What it is | Best for |
-|---|---|---|
-| **Family A** - Full Context Pull | No config. Pull all sources at query time. | ≤5 engineers, 1 repo, 1–2 programs |
-| **Family B** - Manual Source Mapping | Declare sources per program in yaml. Claude queries only those. | Small–medium orgs willing to maintain the mapping |
-| **Family C** - Auto-Ingestion | Ingest signals into a versioned memory store. Four options — **Option C-4 (loop) is the recommended starting point**: Claude runs as a persistent process, self-paces based on activity, no cron or bash scripts required. Option C-2 (cron) for headless operation. C-3 and C-1 for lower latency. | Any org needing auto-ingestion, long history, or scale |
-| **[Serro](https://serro.ai)** - Managed | Connect your tools. Start connecting your downstream agents through MCP. Nothing to build or operate. | Any org that wants live program memory without the infrastructure |
-
-> **Recommended starting point: [Family C — Option C-4](family_c/c4_loop.md).** One `/loop` command, no infrastructure, self-pacing. Claude Code IS the ingestion pipeline. When Anthropic ships cloud workflows, the same loop runs in their cloud with no changes.
-
-Full decision tree with all tradeoffs: [`decision_chart.md`](decision_chart.md)
+Full decision tree: [`decision_chart.md`](decision_chart.md)
 
 ![Architecture Decision Chart](decision_chart_v2.png)
 
