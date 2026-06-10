@@ -1,4 +1,4 @@
-# C1 - Webhook Server
+# Option C-1 - Webhook Server
 
 **Latency:** Seconds | **Complexity:** High | **Infrastructure:** Always-on server
 

@@ -1,4 +1,4 @@
-# C2 - Shared Git Repo + Scheduled Claude Agent
+# Option C-2 - Shared Git Repo + Scheduled Claude Agent
 
 **Latency:** Up to 60 min | **Complexity:** Low | **Infrastructure:** Nothing (just cron)
 
@@ -35,7 +35,7 @@ Any agent anywhere: git pull → reads updated memory
 - Zero new infrastructure - just a cron and a git repo
 - Fully Claude Code native
 - Git history gives you versioned memory for free
-- Easiest migration path to C3 (storage layer stays identical)
+- Easiest migration path to Option C-3 (storage layer stays identical)
 
 ## Cons
 - Polling - up to 60-minute lag (tunable: run every 15 min if needed)

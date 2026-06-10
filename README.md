@@ -125,8 +125,8 @@ The biggest structural gap is the data corpus. Serro has been ingesting and inde
 
 | Layer | Status | Notes |
 |---|---|---|
-| Memory layer | 🟡 Instructions written, not built | Three architectures documented with step-by-step guides. Not validated against a real org. |
-| Proactive layer | 🟡 Out of scope (checkpoint 1) | Requires memory layer to be validated first |
+| Memory layer | 🟢 Instructions written | Three architectures documented with step-by-step guides. Not validated against a real org. |
+| Proactive layer | 🔴 Out of scope (checkpoint 1) | Requires memory layer to be validated first |
 | Widget layer | 🔴 Out of scope (checkpoint 1) | Requires memory + proactive layers |
 
 **Checkpoint 1 complete:** capability analysis, architectural decision tree, and implementation options documented.  

@@ -7,12 +7,12 @@
 ## Steps
 
 - [B1 — Connect your tools](#b1--connect-your-tools)
-- [B2 — Name your programs](#b2--name-your-programs)
+- [B2 — Create a shared program-memory repo](#b2--create-a-shared-program-memory-repo)
 - [B3 — Build the mapping file](#b3--build-the-mapping-file)
 - [B4 — Write your CLAUDE.md](#b4--write-your-claudemd)
 - [B5 — Run the context window test](#b5--run-the-context-window-test)
-- [B6 — Set up the mapping health check](#b6--set-up-the-mapping-health-check)
-- [B7 — Assign a mapping owner](#b7--assign-a-mapping-owner)
+- [B6 — How to keep it current](#b6--how-to-keep-it-current)
+- [B7 — Set up the mapping health check](#b7--set-up-the-mapping-health-check)
 - [B8 — Define your upgrade trigger](#b8--define-your-upgrade-trigger)
 
 ---
@@ -22,22 +22,46 @@
 Same as Family A. Install MCP servers for all sources your programs touch.
 
 ```bash
-claude mcp add github --transport http https://api.githubcopilot.com/mcp/
-claude mcp add slack --transport http https://mcp.slack.com/
-claude mcp add gdrive --transport http https://mcp.gdrive.com/
+claude mcp add github -- npx -y @modelcontextprotocol/server-github
+claude mcp add slack -- npx -y @modelcontextprotocol/server-slack
+claude mcp add gdrive -- npx -y @modelcontextprotocol/server-gdrive
 ```
 
-See [Family A — A1](../family_a/instructions.md#a1--connect-your-tools) for full setup details per source.
+See [Family A — A1](../family_a/instructions.md#a1--connect-your-tools) for environment variable setup, required OAuth scopes, and troubleshooting.
 
 Run `/mcp` to verify all servers are connected before proceeding.
 
 ---
 
-## B2 — Name your programs
+## B2 — Create a shared program-memory repo
 
-Define each active program with a name, owner, and one-line charter. This becomes the index Claude uses to scope queries.
+Same as Family A: create a dedicated repo that the whole team shares. This is where the mapping file lives, where Claude reads instructions, and where digest files get committed.
 
-**Example: `programs.md`**
+```bash
+git clone https://github.com/your-org/program-memory
+cd program-memory
+```
+
+Structure:
+
+```
+program-memory/
+  CLAUDE.md                          ← instructions for Claude
+  programs.md                        ← program index with owners
+  programs_to_sources_mapping.yaml   ← the core config (what makes this Family B)
+  template.md                        ← template for new programs
+  digests/                           ← daily digest files
+  scripts/
+    update_digest.sh                 ← digest update script
+    check_mapping_health.sh          ← health check script
+```
+
+Why a separate repo:
+- Everyone clones it — teammates, TPMs, managers — without needing access to product code
+- The mapping file becomes a shared contract that any program owner can update via a PR
+- Claude can commit digest updates back without touching your main repos
+
+**`programs.md`** — one entry per active program. Use lowercase-hyphenated names; these become the keys in your mapping file.
 
 ```markdown
 # Active Programs
@@ -45,17 +69,45 @@ Define each active program with a name, owner, and one-line charter. This become
 ## auth-modernization
 Owner: @sarah
 Charter: Replace legacy session tokens with JWT across all services. Q3 target.
+Slack: #auth-migration, #backend-eng. Repos: org/backend, org/auth-service.
 
-## platform-reliability  
+## platform-reliability
 Owner: @marcus
 Charter: Reduce p99 latency below 200ms across all API endpoints.
+Slack: #platform, #incidents. Repos: org/backend, org/infra, org/api-gateway.
 
 ## mobile-launch
 Owner: @priya
 Charter: Ship iOS and Android v1.0 by end of Q4.
+Slack: #mobile, #mobile-launch. Repos: org/ios, org/android.
 ```
 
-Use lowercase-hyphenated names — these become the keys in your mapping file.
+### Connecting teammates to this repo
+
+`CLAUDE.md` only does anything when Claude is pointed at this repo. The mapping file is just yaml until Claude is instructed to read it. Every teammate connects once.
+
+**1 — Run Claude from inside the repo**
+
+```bash
+cd ~/program-memory
+claude "what's blocked on mobile-launch right now?"
+```
+
+Claude reads `CLAUDE.md` on startup. All queries automatically use the mapping.
+
+**2 — Add it as a project in Claude Code**
+
+From inside any other repo (your product code, wherever you normally work):
+
+```
+/project:add ~/path/to/program-memory
+```
+
+Claude loads the shared `CLAUDE.md` alongside your current project. Program questions work from anywhere without switching directories.
+
+For scripting and automation (e.g. the digest script), `cd` into the `program-memory` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
+
+The `CLAUDE.md` is what converts a static mapping file into active query behavior. Without it loaded, Claude answers from its own knowledge — stale, uncited, and wrong for anything recent.
 
 ---
 
@@ -132,32 +184,35 @@ mobile-launch:
 
 ## B4 — Write your CLAUDE.md
 
-`CLAUDE.md` tells Claude to use the mapping file and query only the declared sources for the active program.
-
-**Place at repo root: `CLAUDE.md`**
+Place at the root of your `program-memory` repo. This is what every teammate's Claude reads before answering any program question.
 
 ```markdown
-# Program Memory — Claude Instructions
+# Program Memory
+
+This repo is the shared program memory for [Your Org]. Claude reads it before answering
+any program question and writes daily digests back to digests/.
+
+## How to answer program questions
+
+1. Read `programs.md` to identify the program and its owner
+2. Read `programs_to_sources_mapping.yaml` to get the declared sources for that program
+3. Read the most recent file in `digests/` for pre-built context on recent activity
+4. If the digest is stale (>24 hours) or the question needs more depth, pull live:
+   - GitHub: commits, open PRs, closed PRs in the last 14 days, open issues — declared repos only
+   - Slack: messages and threads from the last 14 days — declared channels only
+   - Drive: documents in declared folders
+5. Synthesize across sources — cite every key claim with a source (PR link, Slack thread, doc name)
+6. Flag open blockers and unresolved decisions explicitly
+
+**Never query sources outside the mapping for the active program.**
+**Never answer from memory alone — always read the digest first, then pull live if needed.**
+**If a source returns nothing, say so — do not silently skip it.**
 
 ## Source mapping
 
-All program sources are declared in `programs_to_sources_mapping.yaml`.
-
-When answering a question about a program:
-1. Read `programs_to_sources_mapping.yaml` to find the sources for that program
-2. Query only those sources — do not pull from unmapped sources
-3. For each source type, use the appropriate MCP tool:
-   - GitHub: search commits, PRs, issues in the declared repos
-   - Slack: search threads and messages in the declared channels
-   - Drive: search documents in the declared folders
-4. Synthesize across sources — cite the source of each key claim
-5. If a source returns no results, say so — do not skip it silently
-
-## Constraints
-
-- Do not query sources outside the mapping for the active program
-- Do not answer from memory alone — always pull fresh context
-- If the question spans multiple programs, query each program's sources separately
+All sources are declared in `programs_to_sources_mapping.yaml`. If a channel, repo, or
+folder isn't listed there for a program, it is invisible to queries for that program.
+If something is missing, open a PR to add it.
 
 ## Programs
 
@@ -193,7 +248,160 @@ Before committing to Family B, verify that querying all sources for your largest
 
 ---
 
-## B6 — Set up the mapping health check
+## B6 — How to keep it current
+
+The mapping file and digest are only useful if they stay fresh. There are three ways to do this — pick the one that matches your team's setup. They aren't mutually exclusive; many teams combine the manual owner approach with the automated script.
+
+---
+
+### Option 1 — Dedicated server (automated, lowest ongoing effort)
+
+Run the digest script on a small always-on machine (a $5 VPS, a container on your existing infra, or a GitHub Actions scheduled workflow). It pulls from all declared sources nightly and commits the result back to the repo.
+
+**`scripts/update_digest.sh`**:
+
+```bash
+#!/usr/bin/env bash
+# update_digest.sh — pull daily activity per program and commit to digests/
+set -e
+
+DATE=$(date +%Y-%m-%d)
+OUTPUT="digests/${DATE}.md"
+
+echo "# Program Digest — ${DATE}" > "$OUTPUT"
+echo "" >> "$OUTPUT"
+
+claude --print "
+You are updating the program memory for this org. Today is ${DATE}.
+
+Read programs.md and programs_to_sources_mapping.yaml.
+
+For each program in the mapping:
+1. Search GitHub for commits, merged PRs, and opened issues in the last 24 hours
+   in the repos declared for that program only
+2. Search Slack for messages in the channels declared for that program in the last 24 hours
+3. Search Google Drive for meeting notes or docs updated today in the declared folders
+
+Write the digest in this format:
+
+## [program-name]
+**GitHub**: [what shipped or changed — PR titles, numbers, authors]
+**Slack**: [key decisions, blockers, or threads worth noting]
+**Meetings**: [any meetings today and outcomes]
+**Status**: [one sentence on where this program stands right now]
+**Watch**: [open blockers or unresolved decisions]
+
+Write only what actually happened. If there was no activity on a program today, write 'No activity.'
+" >> "$OUTPUT"
+
+git add "$OUTPUT"
+git commit -m "digest: ${DATE}"
+git push
+```
+
+Schedule with cron on your server:
+
+```bash
+# 6am daily
+0 6 * * * cd /path/to/program-memory && ./scripts/update_digest.sh >> logs/digest.log 2>&1
+```
+
+Or as a GitHub Actions workflow (no server needed):
+
+```yaml
+# .github/workflows/daily-digest.yml
+name: Daily Program Digest
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Install MCP servers
+        run: |
+          npm install -g @modelcontextprotocol/server-github
+          npm install -g @modelcontextprotocol/server-slack
+          npm install -g @modelcontextprotocol/server-gdrive
+          claude mcp add github -- npx -y @modelcontextprotocol/server-github
+          claude mcp add slack -- npx -y @modelcontextprotocol/server-slack
+          claude mcp add gdrive -- npx -y @modelcontextprotocol/server-gdrive
+        env:
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Run digest update
+        run: ./scripts/update_digest.sh
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Commit digest
+        run: |
+          git config user.name "program-memory-bot"
+          git config user.email "bot@your-org.com"
+          git add digests/
+          git commit -m "digest: $(date +%Y-%m-%d)" || echo "No changes to commit"
+          git push
+```
+
+> **When Anthropic ships Workflows**: replace the cron entirely — run the digest as a cloud workflow every few hours instead of once a day. Same script, event-driven trigger.
+
+---
+
+### Option 2 — Run it locally (low setup cost, slow)
+
+If you don't want a server, run the script from your own machine. It works — but expect it to take several minutes per run. The script has to authenticate, fire MCP calls across all programs sequentially, wait for Claude to synthesize, and commit back. On a 5-program org with 4–5 sources per program, that's easily 10–15 minutes.
+
+```bash
+cd ~/program-memory
+./scripts/update_digest.sh
+```
+
+Fine for occasional manual refreshes or testing before setting up the server. Not reliable as your daily update mechanism if anyone on your team forgets to run it.
+
+---
+
+### Option 3 — Manual updates by a TPM or program owner (no script, no server)
+
+If your team has dedicated TPMs, or if you're a manager directly responsible for a program, you don't need the script at all. You own the mapping — keep it current the same way you'd maintain a wiki.
+
+**What this looks like in practice:**
+
+When you spin up a new program, or when a channel gets renamed, or when a new repo is created — you open a PR to `programs_to_sources_mapping.yaml` directly in GitHub. The PR is the audit trail. Reviews are cheap — it's a few lines of yaml. Merge it, and Claude's next query picks up the new source automatically.
+
+```yaml
+# programs_to_sources_mapping.yaml
+# Owner: @sarah (TPM) — open a PR to add or change sources
+
+mobile-launch:
+  github:
+    repos:
+      - org/ios
+      - org/android
+      - org/mobile-api    # added when mobile API repo was created
+  slack:
+    channels:
+      - mobile
+      - mobile-launch
+      - design
+      - mobile-qa         # added when QA spun up their own channel
+```
+
+This is the right choice when:
+- You have a TPM who already does this kind of operational housekeeping
+- Your programs are stable and sources don't change often
+- You want explicit control over what's in the mapping (no surprise auto-discovery)
+
+The tradeoff: if nobody opens the PR, the mapping silently drifts. Combine with the health check (below) to catch stale entries.
+
+---
+
+## B7 — Set up the mapping health check
 
 Family B fails silently when the mapping is stale. A health check catches the most common failure mode: a channel gets renamed, a repo gets archived, or a folder gets moved.
 
@@ -203,22 +411,36 @@ Family B fails silently when the mapping is stale. A health check catches the mo
 #!/bin/bash
 # check_mapping_health.sh
 # Reads programs_to_sources_mapping.yaml and verifies each declared source exists
-
-# Requires: yq (yaml parser), GitHub CLI (gh), Slack CLI or API token
+# Requires: yq (yaml parser), GitHub CLI (gh), SLACK_BOT_TOKEN env var
 
 MAPPING="programs_to_sources_mapping.yaml"
 ERRORS=0
 
 # Check GitHub repos
-for repo in $(yq '.*.github.repos[]' $MAPPING 2>/dev/null); do
+for repo in $(yq '.*.github.repos[]' $MAPPING 2>/dev/null | tr -d '"'); do
   if ! gh repo view "$repo" &>/dev/null; then
-    echo "ERROR: GitHub repo not found: $repo"
+    echo "ERROR: GitHub repo not found or inaccessible: $repo"
     ERRORS=$((ERRORS + 1))
   fi
 done
 
+# Check Slack channels
+if [ -n "$SLACK_BOT_TOKEN" ]; then
+  # Fetch all channel names from workspace once (avoids per-channel API calls)
+  all_channels=$(curl -sf "https://slack.com/api/conversations.list?limit=1000&exclude_archived=true" \
+    -H "Authorization: Bearer $SLACK_BOT_TOKEN" | jq -r '.channels[].name' 2>/dev/null)
+  for channel in $(yq '.*.slack.channels[]' $MAPPING 2>/dev/null | tr -d '"'); do
+    if ! echo "$all_channels" | grep -qx "$channel"; then
+      echo "ERROR: Slack channel not found or archived: #$channel"
+      ERRORS=$((ERRORS + 1))
+    fi
+  done
+else
+  echo "SKIP: SLACK_BOT_TOKEN not set — skipping Slack channel checks"
+fi
+
 if [ $ERRORS -gt 0 ]; then
-  echo "$ERRORS source(s) missing from mapping. Update programs_to_sources_mapping.yaml."
+  echo "$ERRORS source(s) missing. Update programs_to_sources_mapping.yaml."
   exit 1
 fi
 
@@ -262,28 +484,6 @@ or inaccessible. Post the result to #program-ops.
 ```
 
 Schedule this as a `/schedule` command or cron-triggered Claude invocation.
-
----
-
-## B7 — Assign a mapping owner
-
-A mapping without an owner drifts. Assign one person — not a team — who is responsible for keeping `programs_to_sources_mapping.yaml` current.
-
-**What the mapping owner does:**
-- Updates the mapping when a new channel, repo, or folder is created for a program
-- Runs (or reviews) the health check output each week
-- Owns the decision of which sources belong to which program
-- Reviews the full mapping once per quarter against active program charters
-
-Add the owner's name to the mapping file:
-
-```yaml
-# programs_to_sources_mapping.yaml
-# Mapping owner: @sarah — update her when sources change
-
-auth-modernization:
-  ...
-```
 
 ---
 

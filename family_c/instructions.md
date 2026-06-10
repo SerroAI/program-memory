@@ -10,11 +10,11 @@ Family C has three sub-options. Pick based on how much latency you can tolerate 
 
 | Option | Latency | Infrastructure | Start here if |
 |---|---|---|---|
-| [C2 — Git + Cron](c2_git_cron.md) | Hourly | Zero beyond a shared git repo | You want the simplest possible start |
-| [C3 — GitHub Actions + Cloudflare Worker](c3_github_actions.md) | 1–2 min | ~10-line Cloudflare Worker (free tier) | You need near-real-time without a server |
-| [C1 — Webhook Server](c1_webhook_server.md) | Seconds | Always-on server you operate | Seconds matter — live incident response, immediate meeting capture |
+| [Option C-2 — Git + Cron](c2_git_cron.md) | Hourly | Zero beyond a shared git repo | You want the simplest possible start |
+| [Option C-3 — GitHub Actions + Cloudflare Worker](c3_github_actions.md) | 1–2 min | ~10-line Cloudflare Worker (free tier) | You need near-real-time without a server |
+| [Option C-1 — Webhook Server](c1_webhook_server.md) | Seconds | Always-on server you operate | Seconds matter — live incident response, immediate meeting capture |
 
-**If you're not sure, start with C2.** It's the lowest-complexity path and you can upgrade to C3 or C1 later without changing your memory store or CLAUDE.md.
+**If you're not sure, start with Option C-2.** It's the lowest-complexity path and you can upgrade to Option C-3 or Option C-1 later without changing your memory store or CLAUDE.md.
 
 ---
 
@@ -23,7 +23,7 @@ Family C has three sub-options. Pick based on how much latency you can tolerate 
 All three options share the same foundation. Complete these before branching to your chosen option.
 
 - [C1 — Connect your tools](#c1--connect-your-tools)
-- [C2 — Name your programs](#c2--name-your-programs)
+- [C2 — Name your programs and create the shared repo](#c2--name-your-programs-and-create-the-shared-repo)
 - [C3 — Build the mapping file](#c3--build-the-mapping-file)
 - [C4 — Choose your memory store](#c4--choose-your-memory-store)
 - [C5 — Choose your ingestion method](#c5--choose-your-ingestion-method)
@@ -35,22 +35,41 @@ All three options share the same foundation. Complete these before branching to 
 Install MCP servers for all sources your programs touch. Same as Family A and B.
 
 ```bash
-claude mcp add github --transport http https://api.githubcopilot.com/mcp/
-claude mcp add slack --transport http https://mcp.slack.com/
-claude mcp add gdrive --transport http https://mcp.gdrive.com/
+claude mcp add github -- npx -y @modelcontextprotocol/server-github
+claude mcp add slack -- npx -y @modelcontextprotocol/server-slack
+claude mcp add gdrive -- npx -y @modelcontextprotocol/server-gdrive
 ```
 
-See [Family A — A1](../family_a/instructions.md#a1--connect-your-tools) for full setup details per source.
+See [Family A — A1](../family_a/instructions.md#a1--connect-your-tools) for environment variable setup, required OAuth scopes, and troubleshooting.
 
 Run `/mcp` to verify all servers are connected.
 
 ---
 
-## C2 — Name your programs
+## C2 — Name your programs and create the shared repo
 
-Same as Family B. Define programs with names, owners, and charters.
+Same as Family B: create a `program-memory` repo, add `programs.md`, `CLAUDE.md`, and `programs_to_sources_mapping.yaml`.
 
-See [Family B — B2](../family_b/instructions.md#b2--name-your-programs) for the format.
+See [Family B — B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) for the full setup.
+
+### Connecting teammates to this repo
+
+Every teammate connects once. Two ways:
+
+**1 — Run Claude from inside the repo**
+
+```bash
+cd ~/program-memory
+claude "what's the status of auth modernization?"
+```
+
+**2 — Add it as a project in Claude Code**
+
+```
+/project:add ~/path/to/program-memory
+```
+
+For automated ingestion scripts (Option C-2 cron, Option C-3 Actions), `cd` into the `program-memory` repo before invoking `claude` so the right `CLAUDE.md` is loaded.
 
 ---
 
@@ -81,7 +100,7 @@ memory-store/
 
 Each file is overwritten (or appended) on every ingestion run. Git history gives you a time-series for free.
 
-Best for: C2 and C3. Simple, auditable, no query infrastructure needed.
+Best for: Option C-2 and Option C-3. Simple, auditable, no query infrastructure needed.
 
 **Option B — SQLite** ⚙️
 
@@ -125,23 +144,23 @@ Your ingestion method determines how signals get from live sources into your mem
 
 | Method | How it triggers | Best for |
 |---|---|---|
-| [C2 — Scheduled cron](c2_git_cron.md) | Timer (hourly, or every 15 min) | Simplest start, hourly lag acceptable |
-| [C3 — GitHub Actions + Worker](c3_github_actions.md) | GitHub push events + Slack/Drive webhooks | 1–2 min lag, no server |
-| [C1 — Webhook server](c1_webhook_server.md) | Direct webhooks from all sources | Seconds lag, you operate a server |
+| [Option C-2 — Scheduled cron](c2_git_cron.md) | Timer (hourly, or every 15 min) | Simplest start, hourly lag acceptable |
+| [Option C-3 — GitHub Actions + Worker](c3_github_actions.md) | GitHub push events + Slack/Drive webhooks | 1–2 min lag, no server |
+| [Option C-1 — Webhook server](c1_webhook_server.md) | Direct webhooks from all sources | Seconds lag, you operate a server |
 
 **Advanced: Apache Iggy as event bus** ⚙️
 
-For C1 and C3 at scale, consider inserting [Apache Iggy](https://github.com/iggy-rs/iggy) as a durable message queue between your webhook receivers and ingestion agent. Instead of the ingestion agent processing events synchronously, events are written to Iggy and consumed at the agent's pace. Gives you:
+For Option C-1 and Option C-3 at scale, consider inserting [Apache Iggy](https://github.com/iggy-rs/iggy) as a durable message queue between your webhook receivers and ingestion agent. Instead of the ingestion agent processing events synchronously, events are written to Iggy and consumed at the agent's pace. Gives you:
 - Replay on failure — missed events don't disappear
 - Backpressure — ingestion agent isn't overwhelmed by bursts
 - Audit log — full event history across all sources
 
-Not needed for most orgs starting out. Evaluate after C1 or C3 is stable and you're seeing dropped events or ingestion failures under load.
+Not needed for most orgs starting out. Evaluate after Option C-1 or Option C-3 is stable and you're seeing dropped events or ingestion failures under load.
 
 ---
 
 ## Continue to your chosen option
 
-- [C2 — Git + Cron](c2_git_cron.md) ← start here
-- [C3 — GitHub Actions + Cloudflare Worker](c3_github_actions.md)
-- [C1 — Webhook Server](c1_webhook_server.md)
+- [Option C-2 — Git + Cron](c2_git_cron.md) ← start here
+- [Option C-3 — GitHub Actions + Cloudflare Worker](c3_github_actions.md)
+- [Option C-1 — Webhook Server](c1_webhook_server.md)

@@ -1,4 +1,4 @@
-# C3 - GitHub Actions + Stateless Serverless Forwarder
+# Option C-3 - GitHub Actions + Stateless Serverless Forwarder
 
 **Latency:** 1–2 min | **Complexity:** Medium | **Infrastructure:** ~10-line Cloudflare Worker
 
@@ -26,7 +26,7 @@ GitHub Actions serves as the compute layer - no server to operate. GitHub events
                                                     agents: git pull → read updated memory
 ```
 
-## Key distinction from C1
+## Key distinction from Option C-1
 GitHub Actions runs in GitHub's cloud - it never touches your local machine. The only thing you write and own is the Cloudflare Worker. GitHub manages the compute.
 
 ## Pros
@@ -38,13 +38,13 @@ GitHub Actions runs in GitHub's cloud - it never touches your local machine. The
 - Cloudflare Worker free tier: 100k requests/day
 
 ## Cons
-- More moving parts than C2 (Worker + Actions workflow + secrets)
+- More moving parts than Option C-2 (Worker + Actions workflow + secrets)
 - Claude Code CLI install adds ~30s to each Actions run
 - MCP servers need configuring in the runner environment
 - ~30s GitHub Actions cold start - not sub-second
 
 ## Verdict
-Best balance of latency and operational simplicity for teams already on GitHub. Upgrade from C2 when hourly polling becomes a problem.
+Best balance of latency and operational simplicity for teams already on GitHub. Upgrade from Option C-2 when hourly polling becomes a problem.
 
 ## Implementation
 See [`../../family_c/c3_github_actions/instructions.md`](../../family_c/c3_github_actions/instructions.md).

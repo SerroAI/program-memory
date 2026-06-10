@@ -6,7 +6,7 @@
 
 ## Three Options at a Glance
 
-| | C1 - Webhook Server | C2 - Git + Cron | C3 - GitHub Actions |
+| | Option C-1 - Webhook Server | Option C-2 - Git + Cron | Option C-3 - GitHub Actions |
 |---|---|---|---|
 | **Latency** | Seconds | Up to 60 min | 1–2 min |
 | **Infrastructure you operate** | Always-on server | Nothing (just cron) | Cloudflare Worker (~10 lines) |
@@ -21,17 +21,17 @@
 ## Which to Pick
 
 ```
-Start with C2 → migrate to C3 when lag matters → C1 only if you need sub-10s latency
+Start with Option C-2 → migrate to Option C-3 when lag matters → Option C-1 only if you need sub-10s latency
 ```
 
-**C2** works today with zero new infrastructure. The git-as-memory-store pattern carries forward cleanly if you later switch to C3 - the storage layer doesn't change, only the trigger mechanism does.
+**Option C-2** works today with zero new infrastructure. The git-as-memory-store pattern carries forward cleanly if you later switch to Option C-3 — the storage layer doesn't change, only the trigger mechanism does.
 
-**C3** is the right upgrade path when hourly polling becomes a real problem. The only new piece you write is a ~10-line Cloudflare Worker.
+**Option C-3** is the right upgrade path when hourly polling becomes a real problem. The only new piece you write is a ~10-line Cloudflare Worker.
 
-**C1** is only justified if you need seconds-level latency and are willing to operate a server 24/7.
+**Option C-1** is only justified if you need seconds-level latency and are willing to operate a server 24/7.
 
 ## Detailed Docs
 
-- [C1 - Webhook Server](c1_webhook_server.md)
-- [C2 - Git + Cron](c2_git_cron.md)
-- [C3 - GitHub Actions + Serverless Forwarder](c3_github_actions.md)
+- [Option C-1 - Webhook Server](c1_webhook_server.md)
+- [Option C-2 - Git + Cron](c2_git_cron.md)
+- [Option C-3 - GitHub Actions + Serverless Forwarder](c3_github_actions.md)
