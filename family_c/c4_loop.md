@@ -32,94 +32,139 @@ Self-pace: found significant activity → sleep 30 min
 Wakes up and repeats
 ```
 
+## What goes in your program-memory repo
+
+```
+program-memory/
+  CLAUDE.md                          ← how Claude answers program questions
+  LOOP.md                            ← ingestion instructions the loop runs each iteration
+  programs.md                        ← active programs and owners
+  programs_to_sources_mapping.yaml   ← which sources belong to each program
+  digests/                           ← written by the loop, one file per run
+```
+
+`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+
+`LOOP.md` is what makes C-4 different. It contains the exact instructions Claude runs on every loop iteration. Copy this into your repo:
+
+---
+
+**`LOOP.md`** — copy this file into your `program-memory` repo as-is, then edit the notes at the top to match your org:
+
+```markdown
+# Loop Instructions
+
+You are the program memory agent for this org. Run these instructions on every iteration.
+
+---
+
+## Step 1 — Read the source mapping
+
+Read `programs_to_sources_mapping.yaml` to get the list of active programs and their
+declared sources (GitHub repos, Slack channels, Drive folders).
+
+## Step 2 — Find the last run timestamp
+
+Read the most recent file in `digests/` and note its `last_run` timestamp.
+If no digest exists yet, treat `last_run` as 24 hours ago.
+
+## Step 3 — Pull signals for each program
+
+For each program in the mapping, pull only what's new since `last_run`:
+
+**GitHub** — search declared repos for:
+- Commits merged to main
+- PRs opened, merged, or closed
+- Issues opened or closed
+Include: title, author, PR/issue number, and a one-line summary.
+
+**Slack** — search declared channels for:
+- Threads with decisions, blockers, or scope changes
+- Messages that mention the program by name or its key terms
+Do not surface every message — only notable discussions.
+
+**Drive** — search declared folders for:
+- Documents created or modified since last_run
+Note: doc title and what section changed if visible.
+
+## Step 4 — Write the digest
+
+Create a new file at `digests/YYYY-MM-DD-HH.md` with this structure for every program
+in the mapping (include programs with no activity — do not skip them):
+
+---
+last_run: [ISO 8601 timestamp]
+
+## [program-name]
+**GitHub**: [what shipped or changed — titles, numbers, authors]
+**Slack**: [key decisions, blockers, or threads worth noting]
+**Drive**: [docs updated and what changed]
+**Status**: [one sentence on where this program stands right now]
+**Watch**: [open blockers or unresolved decisions — leave blank if none]
+
+Write "No activity." under any section with nothing to report.
+
+## Step 5 — Commit and push
+
+git add digests/
+git commit -m "digest: [YYYY-MM-DD HH:MM]"
+git push
+
+## Step 6 — Self-pace
+
+Schedule your next run based on what you found:
+- Significant activity across 2+ programs → 30 minutes
+- Activity in 1 program → 1 hour
+- No activity across all programs → 2 hours
+```
+
+---
+
 ## How to run it
 
-**Step 1 — Make sure MCPs are connected**
+**Step 1 — Verify MCPs are connected**
 
 ```bash
-# Verify all MCP servers are live before starting the loop
 /mcp
 ```
 
-All three (github, slack, gdrive) should show connected. The loop will fail silently on any program whose sources use a disconnected MCP.
+All three (github, slack, gdrive) should show connected. The loop will skip any source whose MCP is disconnected.
 
-**Step 2 — Start the loop from inside the program-memory repo**
+**Step 2 — Start the loop**
 
 ```bash
 cd ~/program-memory
 claude
 ```
 
-Then in the session, paste the full loop prompt:
+Then in the session:
 
 ```
-/loop You are the program memory agent for this org. On each iteration:
-
-1. Read programs_to_sources_mapping.yaml to get the list of programs and their
-   declared sources (repos, Slack channels, Drive folders).
-
-2. Read the most recent file in digests/ to find the last_run timestamp.
-   If no digest exists yet, treat last_run as 24 hours ago.
-
-3. For each program in the mapping:
-   a. GitHub: search for commits, merged PRs, and opened/closed issues in the
-      declared repos since last_run. Include PR titles, authors, and numbers.
-   b. Slack: search for messages and threads in the declared channels since
-      last_run. Surface decisions, blockers, or notable discussions — not
-      every message.
-   c. Drive: list documents created or modified in the declared folders since
-      last_run. Note the doc title and what changed if visible.
-
-4. Write a new digest file at digests/YYYY-MM-DD-HH.md with this structure
-   for each program:
-
-   ## [program-name]
-   last_run: [ISO timestamp]
-   **GitHub**: [what shipped or changed — PR titles, numbers, authors]
-   **Slack**: [key decisions, blockers, or threads worth noting]
-   **Drive**: [docs updated and what changed]
-   **Status**: [one sentence on where this program stands right now]
-   **Watch**: [anything that looks like a blocker or open decision]
-
-   Write "No activity." under any section with nothing to report.
-   Write the full program block even if there was no activity — omitting it
-   means the next iteration can't tell the difference between quiet and missing.
-
-5. Commit the new digest file and push:
-   git add digests/
-   git commit -m "digest: [timestamp]"
-   git push
-
-6. Self-pace your next run:
-   - Significant activity across 2+ programs → run again in 30 minutes
-   - Moderate activity (1 program active) → run again in 1 hour
-   - No activity across all programs → run again in 2 hours
+/loop Read LOOP.md and follow those instructions on every iteration.
 ```
+
+That's it. Claude reads `LOOP.md`, follows the steps, writes a digest, commits, and self-paces.
+
+**Fixed interval (optional)**
+
+```
+/loop 1h Read LOOP.md and follow those instructions.
+```
+
+Remove the self-pace step from `LOOP.md` if using a fixed interval.
 
 **Step 3 — Verify the first run**
-
-After the first iteration completes, check that a new file appeared in `digests/` and was committed:
 
 ```bash
 git log --oneline -3
 ls digests/
 ```
 
-The digest should have an entry for every program in the mapping, even ones with no activity.
+Every program in the mapping should have a block in the digest, even ones with no activity.
 
 **Step 4 — Let it run**
 
-Leave the Claude Code session open. The loop will wake itself up on the self-paced schedule and keep the memory current. If you close the session, the loop stops — restart it with the same `/loop` command and it will pick up from the last digest timestamp.
-
-**Fixed interval (optional)**
-
-If you'd rather have predictable run times instead of self-pacing:
-
-```
-/loop 1h [same prompt as above]
-```
-
-Replace `1h` with `30m`, `2h`, etc. Fixed intervals ignore the self-pace instruction — remove it from the prompt if you use this form.
+Leave the session open. The loop wakes itself up and keeps memory current. If the session closes, restart with the same command — it picks up from the last digest timestamp.
 
 ## Caveats and workarounds
 

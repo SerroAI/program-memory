@@ -10,7 +10,7 @@
 
 | Layer | What it does | Passive or Active? |
 |---|---|---|
-| **Memory** | Ingests signals, organizes by program, keeps context queryable | Passive - responds to signals |
+| **Live Shared Program Memory** | Ingests signals, organizes by program, keeps context queryable | Passive - responds to signals |
 | **Proactive Program Coordinator Agent** | Monitors program state, alerts on drift, follows up on action items | Active - initiates without being asked |
 | **Prompt-based widgets** | User-configured views that re-execute against memory on a refresh interval | Active - surfaces state without requiring a query |
 
@@ -20,7 +20,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 
 ## TL;DR - 10 Capabilities
 
-**Memory layer:**
+**Live Shared Program Memory layer:**
 
 | # | Capability | Est. replication difficulty | Can Claude do it today? | Key gap (unvalidated) |
 |---|---|---|---|---|
@@ -190,7 +190,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 
 **Why this might matter:** A passive memory store requires someone to query it. Proactive monitoring removes that requirement - the system tells you when something is wrong rather than waiting to be asked.
 
-**Replication difficulty:** High. Requires an always-on process (not a Claude session), a defined notion of "drift" or "at risk" that can be evaluated programmatically, and outbound communication capability. Defining what "at risk" means in a way that produces useful alerts without noise is a product problem, not just an engineering one.
+**Replication difficulty:** High. Requires an always-on process, a defined notion of "drift" or "at risk" that can be evaluated programmatically, and outbound communication capability. Currently approximated with scheduled agents — a polling workaround, not a native capability. Cloud workflows with persistent loops would close this gap and turn program health monitoring into a first-class primitive. Defining what "at risk" means in a way that produces useful alerts without noise is a product problem, not just an engineering one.
 
 **Open questions:**
 - What is the false positive rate on proactive alerts? Noisy alerts get ignored.
@@ -209,7 +209,7 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 
 **Why this might matter:** The most common failure mode in coordination is not missed decisions but decisions that were made, assigned, and then silently forgotten. Follow-through automation addresses this.
 
-**Replication difficulty:** High. Requires: extracting action items accurately from unstructured signal (meetings, Slack), associating them with owners and due dates, tracking state over time, and generating follow-up messages that are useful rather than annoying. Each step has meaningful error rates.
+**Replication difficulty:** High. Requires: extracting action items accurately from unstructured signal (meetings, Slack), associating them with owners and due dates, tracking state over time, and generating follow-up messages that are useful rather than annoying. Each step has meaningful error rates. The state persistence and follow-up scheduling problems are currently worked around with cron-triggered agents; cloud workflows with loops would make this architecture significantly cleaner.
 
 **Open questions:**
 - How accurate is action item extraction from meeting transcripts? Transcripts are noisy.
@@ -246,9 +246,9 @@ Each layer depends on the one above it. Memory without ingestion is empty. The p
 
 ## What the Analysis Suggests
 
-The memory and ingestion layers (1–2) are a prerequisite for everything else. Quality of the whole system is bounded by classification accuracy and signal coverage - two things we have not measured.
+The Live Shared Program Memory layer (1–2) is a prerequisite for everything else. Quality of the whole system is bounded by classification accuracy and signal coverage - two things we have not measured.
 
-The proactive TPM layer (8–9) is architecturally the hardest to replicate because Claude is session-scoped. A scheduled agent approximates it but is not the same thing.
+The proactive TPM layer (8–9) is currently constrained by Claude's session-scoped execution model — a scheduled agent approximates it but is not the same thing. This is likely a temporary gap. Cloud workflows with persistent loops would make always-on program monitoring a first-class primitive rather than a polling workaround. If that lands, the combination of Serro-style program-indexed memory and looping cloud agents becomes a genuinely compelling architecture — not a replica of Serro, but arguably a stronger version of it: open, composable, and running natively in the tools engineers already use.
 
 The widget layer (10) is last and depends on everything before it.
 

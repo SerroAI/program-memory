@@ -22,6 +22,55 @@ Google Drive push notifications ────────────────
                               Any agent: git pull → reads updated memory
 ```
 
+## What goes in your program-memory repo
+
+```
+program-memory/
+  CLAUDE.md                          ← how Claude answers program questions
+  INGEST_PROMPT.md                   ← ingestion instructions the server passes to claude per event
+  programs.md                        ← active programs and owners
+  programs_to_sources_mapping.yaml   ← which sources belong to each program
+  digests/                           ← written by claude on each webhook-triggered run
+```
+
+`CLAUDE.md` and `programs_to_sources_mapping.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-program-memory-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+
+`INGEST_PROMPT.md` is the ingestion instruction file the server reads and passes to `claude` on each webhook event. It's the same format as [Option C-2's INGEST_PROMPT.md](c2_git_cron.md#what-goes-in-your-program-memory-repo) — copy that template, then add an event context section at the end:
+
+```markdown
+## Event context
+
+A webhook event just fired. The event payload is appended below. Use it to determine which
+program this event belongs to, prioritize pulling full context for that program from MCP,
+then run the full ingestion pass for any other programs with pending signals.
+```
+
+The server invokes claude per event:
+
+```javascript
+// server.js (Express)
+const { execSync } = require('child_process')
+const fs = require('fs')
+
+app.post('/webhook/:source', verifySignature, async (req, res) => {
+  res.sendStatus(200) // ack immediately — don't block webhook sender
+
+  const source = req.params.source        // "github" | "slack" | "drive"
+  const payload = JSON.stringify(req.body)
+  const basePrompt = fs.readFileSync('/path/to/program-memory/INGEST_PROMPT.md', 'utf8')
+  const fullPrompt = `${basePrompt}\n\nEvent source: ${source}\nPayload: ${payload}`
+
+  execSync(`claude -p "${fullPrompt.replace(/"/g, '\\"')}"`, {
+    cwd: '/path/to/program-memory',
+    env: { ...process.env }
+  })
+})
+```
+
+The server handles three webhook sources: GitHub (`/webhook/github`), Slack Events API (`/webhook/slack`), Google Drive push notifications (`/webhook/drive`). Drive push notification channels expire every 24h and need renewal — add a daily job to re-register them.
+
+---
+
 ## Pros
 - Real-time (seconds latency)
 - Full architectural parity with how Serro likely works
