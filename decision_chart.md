@@ -139,12 +139,12 @@ flowchart TD
     TEMPORAL_OPTIONS["Temporal accuracy:\n\n🔧 Self-hosted:\nFalkorDB supports temporal graph snapshots —\nquery the graph as it existed at any point in time.\nAlternative: append-only digest files in git give a\ncoarse timeline for free (one snapshot per run).\nCocoIndex handles incremental re-indexing so only\nchanged signals are re-processed.\n\n🔵 Serro:\nContinuous event-driven ingestion with timestamps\non every signal — full temporal query support.\nSee: github.com/FalkorDB · cocoindex.io · serro.ai"]
     TEMPORAL_OPTIONS --> Q_INGESTION
 
-    Q_INGESTION{"8. Which ingestion method?\nStart with C-4 unless you\nhave a specific reason not to."}
+    Q_INGESTION{"8. Which ingestion method?\n\n⭐ C-4 is the recommended starting point.\nOnly choose another option if you have\na specific operational requirement."}
 
-    Q_INGESTION -- "C-4: Self-paced, Claude-native\n(recommended start — one /loop command)" --> C4
-    Q_INGESTION -- "C-2: Headless, fixed interval\n(no active session needed)" --> C2
-    Q_INGESTION -- "C-3: Minutes acceptable\n(GitHub Actions + Worker)" --> Q_C3_INFRA
-    Q_INGESTION -- "C-1: Seconds required\n(always-on server)" --> Q_C1_INFRA
+    Q_INGESTION -- "✅ C-4 — recommended\nOne /loop command, no infra" --> C4
+    Q_INGESTION -- "C-2 — need headless\n(no active session)" --> C2
+    Q_INGESTION -- "C-3 — need <2 min latency\n(GitHub Actions + Worker)" --> Q_C3_INFRA
+    Q_INGESTION -- "C-1 — need seconds latency\n(always-on server)" --> Q_C1_INFRA
 
     Q_C3_INFRA{"9. Can you write and deploy\na ~10-line Cloudflare Worker?\n(free tier, stateless, no uptime mgmt)"}
     Q_C3_INFRA -- Yes --> C3
@@ -160,7 +160,7 @@ flowchart TD
     B1_TRADEOFF["⚠️ Tradeoff: C3 is near-real-time without a server\n\nC3 achieves 1–2 min latency.\nFor most program management use cases,\n1–2 min vs. seconds is an acceptable gap.\nOnly genuine real-time use cases (live incident\nresponse, immediate meeting capture) need C1.\n\nVerdict: Use C3. Revisit C1 only if 1–2 min\nlag creates a real operational problem.\nSee: family_c/c3_github_actions.md"]
     B1_TRADEOFF --> C3
 
-    C4(["✅ Option C-4: Claude Code Loop\n• Claude IS the scheduler — self-pacing based on activity\n• One /loop command, no cron, no bash scripts\n• Persistent context across iterations\n• Requires a running Claude Code process\n• Natural upgrade path to Anthropic cloud workflows\nSee: family_c/c4_loop.md"])
+    C4(["✅ Option C-4: Claude Code Loop — recommended Family C start\n• Claude IS the scheduler — self-pacing based on activity\n• One /loop command, no cron, no bash scripts\n• Persistent context across iterations\n• Requires a running Claude Code process\n• Natural upgrade path to Anthropic cloud workflows\n\nNeed a different approach? See family_c/ for:\n• C-2: headless cron · C-3: GitHub Actions · C-1: webhook server\nSee: family_c/c4_loop.md"])
 
     C2(["✅ Option C-2: Shared Git Repo + Scheduled Cron\n• Hourly polling via MCP\n• Zero new infrastructure — fully headless\n• Git = versioned memory history for free\n• Predictable run times, auditable\n• Upgrade to C3 if lag matters\nSee: family_c/c2_git_cron/"])
 
