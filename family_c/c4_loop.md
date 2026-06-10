@@ -42,7 +42,7 @@ serro-diy/
   digests/                ← written by the loop, one file per run
 ```
 
-`CLAUDE.md` and `program_mappings.yaml` are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
+`CLAUDE.md` and [`program_mappings.yaml`](../templates/program_mappings.yaml) are the same as Family B — see [B2](../family_b/instructions.md#b2--create-a-shared-serro-diy-repo) and [B3](../family_b/instructions.md#b3--build-the-mapping-file).
 
 `LOOP.md` is what makes C-4 different. It contains the exact instructions Claude runs on every loop iteration. Copy this into your repo:
 
