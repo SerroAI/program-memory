@@ -330,6 +330,7 @@ The code and documentation in this repository are licensed under the [Apache Lic
 ## Related
 
 - [Serro](https://serro.ai) - the managed platform this reference implementation is based on
+- [Serro Resources](https://serro.ai/resources) - guides, blog posts, and documentation
 - [Claude Code](https://claude.ai/code) - the tool this is built with
 - [Model Context Protocol](https://modelcontextprotocol.io) - the integration layer all approaches depend on
 
