@@ -124,11 +124,15 @@ Options:
 
 Best for: orgs that specifically need semantic search or long-horizon technical reasoning. More setup required.
 
-**Option D — CocoIndex pipeline** ⚙️
+**Level 4 add-on: semantic index** ⚙️
 
-[CocoIndex](https://github.com/cocoindex-io/cocoindex) is an open-source incremental data transformation framework built for AI indexing pipelines. It handles source-to-index transformation, incremental updates, and embedding generation declaratively — replacing a custom ingestion agent entirely.
+Once your loop is stable and you're hitting the ceiling of flat keyword queries, add a vector index on top of the git store. The loop keeps writing to `digests/` unchanged — a separate process reads those files, embeds them, and pushes to a vector store. Claude then queries the index for semantic questions.
 
-Best for: orgs that want a production-grade pipeline without writing ingestion logic from scratch.
+Two options:
+- [CocoIndex](cocoindex_upgrade.md) — open-source, runs locally, full control over chunking and embedding model
+- [LaserData](laserdata_upgrade.md) — managed service, minimal config, data leaves your environment
+
+**Don't add this on Day 1.** You need a stable `digests/` folder before there's anything to index. Start with the git repo option, run the loop for a week, then evaluate whether you're hitting the keyword ceiling.
 
 ---
 

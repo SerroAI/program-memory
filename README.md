@@ -70,7 +70,7 @@ There are four levels. Each one is useful on its own. Each one is also the found
 | **1 — Pull** | Nothing. Claude pulls all sources at query time. | Instant setup. Works until context fills up. | Family A |
 | **2 — Map** | Maintain `program_mappings.yaml` — programs, people, sources in one file. | Scoped queries, contributor attribution, action item follow-up. | Family B |
 | **3 — Loop** | A Claude loop automaintains the digests. | Always-current memory. No manual maintenance. | Family C (C-4 start) |
-| **4 — Graph** | Pipe loop output into a semantic/graph index. | Semantic search. Entity resolution. Temporal reasoning. | Family C + CocoIndex / FalkorDB / Serro |
+| **4 — Graph** | Pipe loop output into a semantic/graph index. | Semantic search. Entity resolution. Temporal reasoning. | Family C + [CocoIndex](family_c/cocoindex_upgrade.md) / [LaserData](family_c/laserdata_upgrade.md) / FalkorDB / Serro |
 
 **Start at Level 3.** One `/loop` command, no infrastructure required. Move to Level 4 only after your loop is stable and you're hitting the ceiling of flat digest queries. The mapping file (`program_mappings.yaml`) is the same at every level — you write it once and it carries forward.
 
@@ -173,10 +173,13 @@ templates/
 │   └── instructions.md             ← step-by-step setup
 │
 ├── family_c/
-│   ├── overview.md                  ← auto-ingestion: C1 / C2 / C3 comparison
+│   ├── overview.md                  ← auto-ingestion: C1 / C2 / C3 / C4 comparison
 │   ├── c1_webhook_server.md         ← always-on server (seconds latency)
 │   ├── c2_git_cron.md               ← git + scheduled cron (hourly, recommended start)
 │   ├── c3_github_actions.md         ← GitHub Actions + Cloudflare Worker (1–2 min)
+│   ├── c4_loop.md                   ← Claude Code loop (simplest, recommended)
+│   ├── cocoindex_upgrade.md         ← Level 4: semantic index via CocoIndex
+│   ├── laserdata_upgrade.md         ← Level 4: semantic index via LaserData
 │   └── instructions.md             ← step-by-step setup
 │
 ├── templates/

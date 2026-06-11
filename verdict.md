@@ -94,7 +94,7 @@ Loop runs → writes digest → CocoIndex / LaserData → vector index (semantic
                                                    → temporal snapshots (point-in-time)
 ```
 
-→ See [CocoIndex](https://github.com/cocoindex-io/cocoindex) · [FalkorDB](https://github.com/FalkorDB/FalkorDB) · [Family C memory store options](family_c/instructions.md#c4--choose-your-memory-store)
+→ See [CocoIndex upgrade guide](family_c/cocoindex_upgrade.md) · [LaserData upgrade guide](family_c/laserdata_upgrade.md) · [FalkorDB](https://github.com/FalkorDB/FalkorDB)
 
 ---
 
