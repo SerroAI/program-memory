@@ -104,7 +104,15 @@ For the full interactive decision tree, see [`../memory_layer_decision_chart.md`
 
 ---
 
-## Proactive Layer Decisions
+---
+
+## Out of Scope — Proactive, Widget, and Agent Governance Layers
+
+> Decisions 9–13 are documented here for completeness, but they are **not in scope for this repo**. This repo covers the memory layer only (decisions 1–8). The proactive layer, action item follow-through, and widget layer require validated memory as a prerequisite and are not implemented here.
+>
+> If you need production-grade versions of these capabilities without building them yourself, see [Serro](https://serro.ai).
+
+---
 
 ### 9. Memory layer validated before proceeding?
 **The decision:** Before building the proactive monitoring layer, have you measured memory quality: classification accuracy, signal coverage, and staleness lag?

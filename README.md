@@ -1,23 +1,24 @@
-# Build Your Own Serro
-### Definitive guide on building your own program memory layer
+# Build Your Own Program Memory Layer
 
-> A starter kit for building live shared program memory using Claude Code, MCP integrations, and git - no proprietary infrastructure required.
+> A starter kit for building live shared program memory using Claude Code, MCP integrations, and git — no proprietary infrastructure required.
+
+> **This repo covers Levels 1–3 (pull, map, loop).** The proactive layer, widget layer, and graph index are out of scope. See the [scope table](#scope) below.
 
 > **This repo contains step-by-step instructions, not code.** There is nothing to `npm install` or `docker run`. Each family folder is a guide for how to build the implementation yourself using Claude Code and native MCP integrations.
 
 [![Status](https://img.shields.io/badge/status-checkpoint%201%20complete-yellow)]()
-[![License](https://img.shields.io/badge/license-MIT-blue)]()
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Built with](https://img.shields.io/badge/built%20with-Claude%20Code-blueviolet)]()
 
 ---
 
 ## Why Serro published this
 
-We want our customers to succeed - with or without us.
+We want our customers to succeed — with or without us.
 
-If you have the engineering bandwidth to build and operate your own live program memory, this repo gives you the full architecture: every decision point, every tradeoff, every dead end we found. You'll know exactly what you're signing up for.
+If you have the engineering bandwidth to build and operate your own live program memory, this repo gives you the full architecture for Levels 1–3: every decision point, every tradeoff, every dead end we found. You'll know exactly what you're signing up for.
 
-If, after reading this, you'd rather not operate it yourself - [Serro](https://serro.ai) is the managed version. Same capabilities, no infrastructure, with a proprietary ontology built from three years of org signals.
+If, after reading this, you'd rather not operate it yourself — [Serro](https://serro.ai) is the managed version. It goes well beyond what's in this repo: managed infrastructure, entity resolution, temporal program intelligence, enterprise controls, and production-grade integrations.
 
 Either way, you'll have made an informed choice. That's the goal.
 
@@ -36,7 +37,24 @@ Without live program memory, every Claude session starts from zero. Engineers re
 
 [Serro](https://serro.ai) solves this by maintaining a continuously updated, program-indexed memory across GitHub, Slack, Google Drive, and meetings - and making it queryable by any agent in the org.
 
-This repo documents how to replicate that using only Claude Code and native MCP integrations.
+This repo documents how to build the **memory layer foundation** using Claude Code and native MCP integrations.
+
+---
+
+## Scope
+
+| | This repo | Serro |
+|---|---|---|
+| Level 1 — Full Context Pull | ✅ Documented | ✅ |
+| Level 2 — Manual Source Mapping | ✅ Documented | ✅ |
+| Level 3 — Auto-Ingestion Loop | ✅ Documented | ✅ |
+| Level 4 — Semantic/graph index | ⚠️ Pointers only (CocoIndex, LaserData, FalkorDB) — not validated | ✅ Built-in |
+| Proactive monitoring layer | 🔴 Out of scope | ✅ |
+| Action item follow-through | 🔴 Out of scope | ✅ |
+| Widget layer | 🔴 Out of scope | ✅ |
+| Entity resolution across tools | 🔴 Out of scope | ✅ |
+| Temporal program intelligence | 🔴 Out of scope | ✅ |
+| Managed infrastructure | 🔴 Out of scope | ✅ |
 
 ---
 
@@ -84,21 +102,21 @@ Full decision tree: [`memory_layer_decision_chart.md`](memory_layer_decision_cha
 
 ## What Serro does that this can't (yet)
 
-This is an honest comparison. The open-source version covers the architecture - but Serro has advantages that aren't replicable with public tooling alone:
+This is an honest comparison. The open-source version covers Levels 1–3 — but Serro goes further:
 
 | Capability | Open-source (this repo) | Serro |
 |---|---|---|
 | Live memory ingestion | ✅ Hourly–seconds depending on Family C option | ✅ Continuous, event-driven |
 | Program-indexed memory | ✅ Via `program_mappings.yaml` | ✅ Auto-classified, org-wide |
 | Keyword search across sources | ✅ Via MCP (GitHub, Slack, Drive) | ✅ |
-| Semantic / embedding search | ⚠️ Requires self-hosted vector store (Family C) | ✅ Built-in |
-| Temporal code intelligence | ⚠️ Keyword search only - conceptual drift not detectable | ✅ Symbol-level history |
-| Engineer contribution history | ⚠️ Reconstructed from git blame + Slack - incomplete | ✅ Continuously maintained |
-| Voice-driven memory updates | ❌ | ✅ |
-| Proactive program coordination | ✅ Via loop pattern — scheduled Claude agent reads memory, flags blockers, posts Slack digest | ✅ Event-driven |
+| Semantic / embedding search | 🔴 Out of scope | ✅ Built-in |
+| Temporal code intelligence | 🔴 Out of scope | ✅ |
+| Engineer contribution history | 🔴 Out of scope | ✅ |
+| Voice-driven memory updates | 🔴 Out of scope | ✅ |
+| Proactive program coordination | 🔴 Out of scope | ✅ |
 | Zero-config setup | ❌ Requires mapping yaml + MCP server setup | ✅ |
 
-The biggest structural gap is the data corpus. Serro has been ingesting and indexing org signals since 2023. The open-source version starts from zero. That gap matters most for temporal reasoning and contribution history.
+The open-source version covers the memory layer. Serro's proprietary ontology and the capabilities built on top of it are out of scope for this repo.
 
 ---
 
@@ -117,56 +135,46 @@ The biggest structural gap is the data corpus. Serro has been ingesting and inde
 
 ## Quick start
 
-> **Read [`critical_review.md`](critical_review.md) first.** This repo has a conflict of interest - it's written by the people who built Serro. The review names the biases explicitly.
+**1. Pick your level**
 
-**1. Understand what you're replicating**
-```
-research/serro_capabilities.md
-```
-Seven capabilities across three layers, with difficulty ratings and measurement rubrics.
+Read [`verdict.md`](verdict.md). It has a single table: setup time, what you get, when to move up. Most teams should start at Level 3 (one `/loop` command). If you're a small org or want the simplest possible start, Level 1 or 2 first.
 
-**2. Pick an architecture**
-```
-memory_layer_decision_chart.md
-```
-A decision tree with 14 decision points. The wrong architecture choice costs weeks.
+**2. Follow the implementation guide for your level**
 
-**3. Read what didn't work**
-```
-comparative_analysis.md
-```
-MCP is pull-only - not a continuous stream. Several architectural assumptions fail because of this. Don't repeat the mistakes.
+| Level | File |
+|---|---|
+| Level 1 — Full Context Pull | [`family_a/instructions.md`](family_a/instructions.md) |
+| Level 2 — Manual Source Mapping | [`family_b/instructions.md`](family_b/instructions.md) |
+| Level 3 — Auto-Ingestion Loop | [`family_c/c4_loop.md`](family_c/c4_loop.md) (recommended) or [`family_c/instructions.md`](family_c/instructions.md) for all options |
 
-**4. Follow implementation instructions**
-```
-family_a/  family_b/  family_c/
-```
-Pick your family from the decision chart. Each folder has an `instructions.md`.
+**3. Copy the templates**
 
-**5. Copy the templates**
-```
-templates/
-```
-`program_mappings.yaml`, `charter.md`, and `CLAUDE_template.md` are ready to fill in.
+`templates/program_mappings.yaml`, `templates/charter.md`, and `templates/CLAUDE_template.md` — fill in your org's programs, sources, and owners.
+
+**Before you build, read these:**
+- [`critical_review.md`](critical_review.md) — this repo has a conflict of interest; the review names the biases explicitly
+- [`comparative_analysis.md`](comparative_analysis.md) — MCP is pull-only, not a continuous stream; several architectural assumptions fail because of this
+- [`family_b/overview.md`](family_b/overview.md) — Family B has 6 known limitations; long-horizon technical reasoning is the hardest gap to close
 
 ---
 
 ## Repo structure
 
 ```
-├── README.md                        ← you are here
-├── CLAUDE.md                        ← agent navigation (read if you're an AI)
-├── goal.md                          ← mission and motivation
-├── critical_review.md               ← honest critique of this analysis
-├── comparative_analysis.md          ← what we tried, what broke, the key fork
-├── key_decisions.md                 ← 14 decision points with rationale
-├── memory_layer_decision_chart.md                ← mermaid decision tree for picking an approach
+├── LICENSE                              ← Apache 2.0
+├── README.md                            ← you are here
+├── CLAUDE.md                            ← agent navigation (read if you're an AI)
+├── verdict.md                           ← level selection: setup time, capabilities, tradeoffs
+├── critical_review.md                   ← conflict of interest notice; read before building
+├── comparative_analysis.md              ← what broke in earlier designs; key architectural fork
+├── key_decisions.md                     ← 8 memory-layer decision points (9–13 = out of scope)
+├── memory_layer_decision_chart.md       ← mermaid decision tree for picking an approach
 │
 ├── research/
-│   └── serro_capabilities.md        ← 7 capabilities, difficulty ratings, open questions
+│   └── serro_capabilities.md            ← 2 in-scope capabilities; scope boundary defined
 │
 ├── family_a/
-│   └── instructions.md              ← full context pull - micro-orgs, zero config
+│   └── instructions.md                  ← Level 1: full context pull — micro-orgs, zero config
 │
 ├── family_b/
 │   ├── overview.md                  ← human-maintained source mapping approach
@@ -178,31 +186,15 @@ templates/
 │   ├── c2_git_cron.md               ← git + scheduled cron (hourly, recommended start)
 │   ├── c3_github_actions.md         ← GitHub Actions + Cloudflare Worker (1–2 min)
 │   ├── c4_loop.md                   ← Claude Code loop (simplest, recommended)
-│   ├── cocoindex_upgrade.md         ← Level 4: semantic index via CocoIndex
-│   ├── laserdata_upgrade.md         ← Level 4: semantic index via LaserData
-│   └── instructions.md             ← step-by-step setup
+│   ├── cocoindex_upgrade.md         ← Level 4 pointer (out of scope — see scope note inside)
+│   ├── laserdata_upgrade.md         ← Level 4 pointer (out of scope — see scope note inside)
+│   └── instructions.md             ← shared setup steps + option comparison
 │
 ├── templates/
 │   ├── program_mappings.yaml
 │   ├── charter.md
 │   └── CLAUDE_template.md
-│
-├── content/
-│   ├── youtube_script_checkpoint_1.md
-│   └── blog_post_checkpoint_1.md
-│
-└── content_ideas/
-    ├── youtube_script_v1.md             ← first-person YouTube script (Jake's POV)
-    └── serroloop_blog_post.md           ← loop pattern applied to program engineering
 ```
-
----
-
-## Read this before building
-
-- [`critical_review.md`](critical_review.md) - conflict of interest, unvalidated assumptions, what would constitute real evidence
-- [`comparative_analysis.md`](comparative_analysis.md) - Approach 1 failed because MCP is pull-only. Don't design around polling as if it's continuous ingestion.
-- [`family_b/overview.md`](family_b/overview.md) - Family B has 6 known limitations. Long-horizon technical reasoning is the hardest gap to close.
 
 ---
 
@@ -258,7 +250,7 @@ It does this by:
 - Following up on action items
 - Routing context to downstream agents so they don't start from zero
 
-[Serro](https://serro.ai) is an agentic TPM. This repo is a guide for building a version of it yourself.
+[Serro](https://serro.ai) is an agentic TPM platform. This repo covers the open-source foundation — the memory layer — that an agentic TPM builds on top of.
 
 ---
 
@@ -329,13 +321,15 @@ Please do not contribute claims without measurements. The value of this repo is 
 
 ## License
 
-MIT. Use it, fork it, build on it.
+The code and documentation in this repository are licensed under the [Apache License, Version 2.0](LICENSE). You may use, modify, and distribute them under those terms.
+
+**Trademark notice:** "Serro" and related marks are trademarks of Serro, Inc. The Apache 2.0 license applies to the contents of this repository but does not grant permission to use Serro's name, logo, or branding except for factual attribution (e.g., "based on Serro's open-source reference implementation").
 
 ---
 
 ## Related
 
-- [Serro](https://serro.ai) - the managed version of what this repo attempts to build
+- [Serro](https://serro.ai) - the managed platform this reference implementation is based on
 - [Claude Code](https://claude.ai/code) - the tool this is built with
 - [Model Context Protocol](https://modelcontextprotocol.io) - the integration layer all approaches depend on
 

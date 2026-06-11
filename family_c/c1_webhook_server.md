@@ -86,4 +86,4 @@ The server handles three webhook sources: GitHub (`/webhook/github`), Slack Even
 Highest fidelity. Most operational overhead. Right choice only if latency matters and you're willing to run infrastructure.
 
 ## Implementation
-See [`../../family_a/c1_webhook_server/instructions.md`](../../family_a/c1_webhook_server/instructions.md).
+The setup steps above are the implementation. For shared prerequisites (MCP setup, repo creation, mapping file), see [`../instructions.md`](instructions.md).

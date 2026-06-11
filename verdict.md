@@ -67,6 +67,12 @@ That's it. Claude is the ingestion pipeline.
 
 ---
 
+---
+
+> **Scope boundary: this repo ends at Level 3.** Level 4 requires a graph database, a semantic index, and operational infrastructure that go significantly beyond what's documented here. Open-source pointers exist (CocoIndex, LaserData, FalkorDB) — see `family_c/cocoindex_upgrade.md` and `family_c/laserdata_upgrade.md` — but this repo does not provide validated instructions for them. If you need production-grade Level 4 without building it yourself, [Serro](https://serro.ai) covers it out of the box.
+
+---
+
 ## Level 4 — Graph index
 
 **What it is:** The loop's digest output is piped into a semantic and graph index. Instead of querying flat markdown files, you query a structured index that understands relationships, embeddings, and time.

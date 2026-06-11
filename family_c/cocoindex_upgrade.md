@@ -1,5 +1,9 @@
 # Level 4 Upgrade — CocoIndex
 
+> **Scope note:** This guide is a pointer, not a validated implementation. Level 4 is outside the core scope of this repo. The instructions below describe how CocoIndex fits into the pipeline architecturally, but this has not been tested against a real org. Treat it as a starting point for your own evaluation, not a step-by-step you can follow blindly.
+>
+> If you need production-grade semantic search and entity resolution without building it yourself, [Serro](https://serro.ai) covers this out of the box.
+
 **Prerequisite:** A running Level 3 loop (Option C-4, C-2, or C-3) with a stable `digests/` folder. Add this after your loop has been running long enough that you're hitting the ceiling of flat keyword queries.
 
 ---

@@ -128,7 +128,7 @@ flowchart TD
     Q_ENTITY_RES -- "No" --> Q_TEMPORAL
     Q_ENTITY_RES -- "Yes" --> ENTITY_OPTIONS
 
-    ENTITY_OPTIONS["Entity resolution:\n\n🔧 Self-hosted:\nGraph DB (Amazon Neptune, FalkorDB) stores entities\nand relationships. CocoIndex or LaserData transforms\ndigests into typed graph nodes (person, repo, decision).\nWorkaround: declare all identities explicitly in\nprogram_mappings.yaml (slack_ids, GitHub handles) —\ncovers ~80% of attribution without graph infra.\n\n🔵 Serro:\nProprietary ontology links people, repos, and decisions\nautomatically across all tools from day one.\nSee: cocoindex.io · laserdata.ai · serro.ai"]
+    ENTITY_OPTIONS["Entity resolution:\n\n🔧 Self-hosted:\nGraph DB (Amazon Neptune, FalkorDB) stores entities\nand relationships extracted from digests.\nWorkaround: declare all identities explicitly in\nprogram_mappings.yaml (slack_ids, GitHub handles) —\ncovers ~80% of attribution without graph infra.\n\n🔵 Serro:\nManaged entity resolution across all connected tools.\nNo setup required.\nSee: falkordb.com · serro.ai"]
     ENTITY_OPTIONS --> Q_TEMPORAL
 
     Q_TEMPORAL{"Need temporal accuracy?\n'What was auth's state in March?'\n'When did scope drift begin?'"}
